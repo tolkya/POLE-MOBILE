@@ -1,0 +1,286 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'skill_media_tuto.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+
+/// @nodoc
+mixin _$SkillMediaTuto {
+
+ int get id; String? get mediaUrl; String? get mimetype; String? get originalName;
+/// Create a copy of SkillMediaTuto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SkillMediaTutoCopyWith<SkillMediaTuto> get copyWith => _$SkillMediaTutoCopyWithImpl<SkillMediaTuto>(this as SkillMediaTuto, _$identity);
+
+  /// Serializes this SkillMediaTuto to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SkillMediaTuto&&(identical(other.id, id) || other.id == id)&&(identical(other.mediaUrl, mediaUrl) || other.mediaUrl == mediaUrl)&&(identical(other.mimetype, mimetype) || other.mimetype == mimetype)&&(identical(other.originalName, originalName) || other.originalName == originalName));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,mediaUrl,mimetype,originalName);
+
+@override
+String toString() {
+  return 'SkillMediaTuto(id: $id, mediaUrl: $mediaUrl, mimetype: $mimetype, originalName: $originalName)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SkillMediaTutoCopyWith<$Res>  {
+  factory $SkillMediaTutoCopyWith(SkillMediaTuto value, $Res Function(SkillMediaTuto) _then) = _$SkillMediaTutoCopyWithImpl;
+@useResult
+$Res call({
+ int id, String? mediaUrl, String? mimetype, String? originalName
+});
+
+
+
+
+}
+/// @nodoc
+class _$SkillMediaTutoCopyWithImpl<$Res>
+    implements $SkillMediaTutoCopyWith<$Res> {
+  _$SkillMediaTutoCopyWithImpl(this._self, this._then);
+
+  final SkillMediaTuto _self;
+  final $Res Function(SkillMediaTuto) _then;
+
+/// Create a copy of SkillMediaTuto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? mediaUrl = freezed,Object? mimetype = freezed,Object? originalName = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,mediaUrl: freezed == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
+as String?,mimetype: freezed == mimetype ? _self.mimetype : mimetype // ignore: cast_nullable_to_non_nullable
+as String?,originalName: freezed == originalName ? _self.originalName : originalName // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SkillMediaTuto].
+extension SkillMediaTutoPatterns on SkillMediaTuto {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SkillMediaTuto value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SkillMediaTuto() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SkillMediaTuto value)  $default,){
+final _that = this;
+switch (_that) {
+case _SkillMediaTuto():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SkillMediaTuto value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SkillMediaTuto() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SkillMediaTuto() when $default != null:
+return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName)  $default,) {final _that = this;
+switch (_that) {
+case _SkillMediaTuto():
+return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName)?  $default,) {final _that = this;
+switch (_that) {
+case _SkillMediaTuto() when $default != null:
+return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SkillMediaTuto implements SkillMediaTuto {
+  const _SkillMediaTuto({required this.id, this.mediaUrl, this.mimetype, this.originalName});
+  factory _SkillMediaTuto.fromJson(Map<String, dynamic> json) => _$SkillMediaTutoFromJson(json);
+
+@override final  int id;
+@override final  String? mediaUrl;
+@override final  String? mimetype;
+@override final  String? originalName;
+
+/// Create a copy of SkillMediaTuto
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SkillMediaTutoCopyWith<_SkillMediaTuto> get copyWith => __$SkillMediaTutoCopyWithImpl<_SkillMediaTuto>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SkillMediaTutoToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SkillMediaTuto&&(identical(other.id, id) || other.id == id)&&(identical(other.mediaUrl, mediaUrl) || other.mediaUrl == mediaUrl)&&(identical(other.mimetype, mimetype) || other.mimetype == mimetype)&&(identical(other.originalName, originalName) || other.originalName == originalName));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,mediaUrl,mimetype,originalName);
+
+@override
+String toString() {
+  return 'SkillMediaTuto(id: $id, mediaUrl: $mediaUrl, mimetype: $mimetype, originalName: $originalName)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SkillMediaTutoCopyWith<$Res> implements $SkillMediaTutoCopyWith<$Res> {
+  factory _$SkillMediaTutoCopyWith(_SkillMediaTuto value, $Res Function(_SkillMediaTuto) _then) = __$SkillMediaTutoCopyWithImpl;
+@override @useResult
+$Res call({
+ int id, String? mediaUrl, String? mimetype, String? originalName
+});
+
+
+
+
+}
+/// @nodoc
+class __$SkillMediaTutoCopyWithImpl<$Res>
+    implements _$SkillMediaTutoCopyWith<$Res> {
+  __$SkillMediaTutoCopyWithImpl(this._self, this._then);
+
+  final _SkillMediaTuto _self;
+  final $Res Function(_SkillMediaTuto) _then;
+
+/// Create a copy of SkillMediaTuto
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? mediaUrl = freezed,Object? mimetype = freezed,Object? originalName = freezed,}) {
+  return _then(_SkillMediaTuto(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,mediaUrl: freezed == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
+as String?,mimetype: freezed == mimetype ? _self.mimetype : mimetype // ignore: cast_nullable_to_non_nullable
+as String?,originalName: freezed == originalName ? _self.originalName : originalName // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+// dart format on
