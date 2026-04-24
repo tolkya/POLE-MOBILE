@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/features/auth/data/auth_repository.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
+import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
+import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 import 'package:pole_mobile/features/profile/providers/me_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
@@ -43,6 +45,10 @@ class ProfilePage extends ConsumerWidget {
   Future<void> _logout(WidgetRef ref, BuildContext context) async {
     await ref.read(authRepositoryProvider).logout();
     ref.read(tokenProvider.notifier).clearToken();
+      ref
+        ..invalidate(meProvider)
+        ..invalidate(myClubsProvider)
+        ..invalidate(activeClubIdProvider);
     if (context.mounted) context.go('/auth');
   }
 }

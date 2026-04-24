@@ -30,7 +30,7 @@ final dioProvider = Provider<Dio>((ref) {
   dio.interceptors.addAll([
     AuthInterceptor(storage),
     ErrorInterceptor(),
-    LogInterceptor(),
+    LogInterceptor(responseBody: true),
   ]);
 
   return dio;

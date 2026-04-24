@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/features/auth/data/auth_repository.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
+import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
+import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
+import 'package:pole_mobile/features/profile/providers/me_provider.dart';
+
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -34,6 +38,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             password: _passwordCtrl.text,
           );
       ref.read(tokenProvider.notifier).token = token;
+      ref
+        ..invalidate(meProvider)
+        ..invalidate(myClubsProvider)
+        ..invalidate(activeClubIdProvider);
       if (mounted) context.go('/home');
     } on Exception catch (e) {
       if (mounted) {

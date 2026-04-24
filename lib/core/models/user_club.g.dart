@@ -9,7 +9,6 @@ part of 'user_club.dart';
 _UserClub _$UserClubFromJson(Map<String, dynamic> json) => _UserClub(
   id: (json['id'] as num).toInt(),
   club: Club.fromJson(json['club'] as Map<String, dynamic>),
-  member: User.fromJson(json['member'] as Map<String, dynamic>),
   roles:
       (json['roles'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$ClubRoleEnumMap, e))
@@ -26,7 +25,6 @@ _UserClub _$UserClubFromJson(Map<String, dynamic> json) => _UserClub(
 Map<String, dynamic> _$UserClubToJson(_UserClub instance) => <String, dynamic>{
   'id': instance.id,
   'club': instance.club,
-  'member': instance.member,
   'roles': instance.roles.map((e) => _$ClubRoleEnumMap[e]!).toList(),
   'validatedAt': instance.validatedAt?.toIso8601String(),
   'createdAt': instance.createdAt?.toIso8601String(),

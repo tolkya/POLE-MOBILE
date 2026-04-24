@@ -13,8 +13,8 @@ class ClubsRepository {
   final Dio _dio;
 
   Future<List<UserClub>> getMyClubs() async {
-    final response = await _dio.get<Map<String, dynamic>>('/me/clubs');
-    final members = response.data?['member'] as List<dynamic>? ?? [];
+    final response = await _dio.get<List<dynamic>>('/me/clubs');
+    final members = response.data ?? [];
     return members
         .cast<Map<String, dynamic>>()
         .map(UserClub.fromJson)
