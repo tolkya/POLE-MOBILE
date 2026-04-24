@@ -7,7 +7,6 @@ import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 import 'package:pole_mobile/features/profile/providers/me_provider.dart';
 
-
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -56,55 +55,134 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Connexion')),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _emailCtrl,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                validator: (v) =>
-                    (v == null || !v.contains('@')) ? 'Email invalide' : null,
+      body: Column(
+        children: [
+          // Header compact : SafeArea + Row (retour + titre)
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(24),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordCtrl,
-                decoration: InputDecoration(
-                  labelText: 'Mot de passe',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscure ? Icons.visibility_off : Icons.visibility,
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4, 4, 24, 16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      color: colorScheme.onPrimaryContainer,
+                      onPressed: () => context.pop(),
                     ),
-                    onPressed: () => setState(() => _obscure = !_obscure),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Connexion',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Formulaire centré
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextFormField(
+                        controller: _emailCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: Icon(Icons.email_outlined),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        validator: (v) => (v == null || !v.contains('@'))
+                            ? 'Email invalide'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _passwordCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Mot de passe',
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscure
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () =>
+                                setState(() => _obscure = !_obscure),
+                          ),
+                        ),
+                        obscureText: _obscure,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _submit(),
+                        validator: (v) => (v == null || v.length < 6)
+                            ? '6 caractères minimum'
+                            : null,
+                      ),
+                      const SizedBox(height: 32),
+                      FilledButton(
+                        onPressed: _loading ? null : _submit,
+                        child: _loading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Se connecter'),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Vous n'avez pas de compte ? ",
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                          GestureDetector(
+                            onTap: () => context.pushReplacement('/auth/register'),
+                            child: Text(
+                              "S'inscrire",
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                obscureText: _obscure,
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) => _submit(),
-                validator: (v) =>
-                    (v == null || v.length < 6) ? '6 caractères minimum' : null,
               ),
-              const SizedBox(height: 32),
-              FilledButton(
-                onPressed: _loading ? null : _submit,
-                child: _loading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Se connecter'),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

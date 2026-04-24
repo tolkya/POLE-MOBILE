@@ -40,12 +40,12 @@ class AuthRepository {
     String? phone,
   }) async {
     await _dio.post<void>(
-      '/register/member',
+      '/register',
       data: {
         'firstName': firstName,
         'lastName': lastName,
         'email': email,
-        'password': password,
+        'plainPassword': password,
         if (phone != null && phone.isNotEmpty) 'phone': phone,
       },
     );
