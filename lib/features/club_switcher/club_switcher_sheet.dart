@@ -4,19 +4,29 @@ import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 
+/// Hauteur d'un ListTile standard Material 3
+const double _tileHeight = 72;
+
+/// Header : handle (4px) + paddings + titre
+const double _headerHeight = 80;
+
+/// Maximum de clubs visibles sans scroller
+const int _maxVisibleClubs = 5;
+
 class ClubSwitcherSheet extends ConsumerWidget {
   const ClubSwitcherSheet({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final clubs = ref.watch(myClubsProvider).asData?.value ?? [];
-    final activeId =
-        ref.watch(activeUserClubProvider)?.club.id;
+    final activeId = ref.watch(activeUserClubProvider)?.club.id;
 
-    return DraggableScrollableSheet(
-      minChildSize: 0.3,
-      maxChildSize: 0.85,
-      builder: (_, controller) => Column(
+    final visibleCount = clubs.length.clamp(1, _maxVisibleClubs);
+    final sheetHeight = _headerHeight + visibleCount * _tileHeight;
+
+    return SizedBox(
+      height: sheetHeight,
+      child: Column(
         children: [
           const SizedBox(height: 12),
           Container(
@@ -35,8 +45,8 @@ class ClubSwitcherSheet extends ConsumerWidget {
           const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
-              controller: controller,
               itemCount: clubs.length,
+              itemExtent: _tileHeight,
               itemBuilder: (_, index) {
                 final userClub = clubs[index];
                 final isActive = userClub.club.id == activeId;
