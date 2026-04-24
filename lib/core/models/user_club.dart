@@ -8,7 +8,7 @@ part 'user_club.freezed.dart';
 part 'user_club.g.dart';
 
 @freezed
-class UserClub with _$UserClub {
+abstract class UserClub with _$UserClub {
   const factory UserClub({
     required int id,
     required Club club,

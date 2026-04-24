@@ -8,7 +8,7 @@ part 'user_activity.freezed.dart';
 part 'user_activity.g.dart';
 
 @freezed
-class UserActivity with _$UserActivity {
+abstract class UserActivity with _$UserActivity {
   const factory UserActivity({
     required int id,
     required User member,

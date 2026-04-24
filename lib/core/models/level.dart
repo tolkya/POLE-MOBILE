@@ -4,7 +4,7 @@ part 'level.freezed.dart';
 part 'level.g.dart';
 
 @freezed
-class Level with _$Level {
+abstract class Level with _$Level {
   const factory Level({
     required int id,
     required String name,

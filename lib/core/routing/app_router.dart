@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/features/auth/pages/auth_landing_page.dart';
+import 'package:pole_mobile/features/auth/pages/login_page.dart';
+import 'package:pole_mobile/features/auth/pages/register_page.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
 import 'package:pole_mobile/features/discover/pages/discover_page.dart';
 import 'package:pole_mobile/features/home/pages/home_page.dart';
@@ -25,6 +27,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/auth',
         builder: (_, _) => const AuthLandingPage(),
+        routes: [
+          GoRoute(
+            path: 'login',
+            builder: (_, _) => const LoginPage(),
+          ),
+          GoRoute(
+            path: 'register',
+            builder: (_, _) => const RegisterPage(),
+          ),
+        ],
       ),
       ShellRoute(
         builder: (_, _, child) => ShellPage(child: child),

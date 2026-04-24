@@ -6,7 +6,7 @@ part 'notification_receipt.freezed.dart';
 part 'notification_receipt.g.dart';
 
 @freezed
-class NotificationEvent with _$NotificationEvent {
+abstract class NotificationEvent with _$NotificationEvent {
   const factory NotificationEvent({
     required int id,
     String? notifType,
@@ -22,7 +22,7 @@ class NotificationEvent with _$NotificationEvent {
 }
 
 @freezed
-class NotificationReceipt with _$NotificationReceipt {
+abstract class NotificationReceipt with _$NotificationReceipt {
   const factory NotificationReceipt({
     required int id,
     required NotificationEvent event,

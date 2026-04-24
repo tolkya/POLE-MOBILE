@@ -4,7 +4,7 @@ part 'activity_type.freezed.dart';
 part 'activity_type.g.dart';
 
 @freezed
-class ActivityType with _$ActivityType {
+abstract class ActivityType with _$ActivityType {
   const factory ActivityType({
     required int id,
     required String name,

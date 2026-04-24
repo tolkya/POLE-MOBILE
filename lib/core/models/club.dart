@@ -6,7 +6,7 @@ part 'club.freezed.dart';
 part 'club.g.dart';
 
 @freezed
-class Club with _$Club {
+abstract class Club with _$Club {
   const factory Club({
     required int id,
     required String name,
