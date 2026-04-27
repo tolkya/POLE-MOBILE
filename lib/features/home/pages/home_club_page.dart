@@ -4,6 +4,8 @@ import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/features/club_switcher/club_switcher_sheet.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
+import 'package:pole_mobile/features/home/widgets/club_activities_grid.dart';
+import 'package:pole_mobile/features/home/widgets/my_activities_strip.dart';
 
 class HomeClubPage extends ConsumerWidget {
   const HomeClubPage({super.key});
@@ -50,17 +52,16 @@ class HomeClubPage extends ConsumerWidget {
         },
         child: ListView(
           padding: const EdgeInsets.all(16),
-          children: [
+                    children: [
             _StatusBanner(userClub: userClub),
             const SizedBox(height: 24),
+            const MyActivitiesStrip(),
             Text(
-              'Activités',
+              'Toutes les activités',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
-            const Center(
-              child: Text('Les activités arrivent bientôt...'),
-            ),
+            const ClubActivitiesGrid(),
           ],
         ),
       ),

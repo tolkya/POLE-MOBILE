@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/models/club.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/core/network/dio_provider.dart';
@@ -39,6 +40,16 @@ class ClubsRepository {
       '/user-clubs/join',
       data: {'clubCode': clubCode},
     );
+  }
+
+  Future<List<Activity>> getClubActivities(int clubId) async {
+    final response = await _dio.get<List<dynamic>>(
+      '/clubs/$clubId/activities',
+    );
+    return (response.data ?? [])
+        .cast<Map<String, dynamic>>()
+        .map(Activity.fromJson)
+        .toList();
   }
 }
 
