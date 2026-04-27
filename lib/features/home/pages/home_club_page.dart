@@ -43,20 +43,26 @@ class HomeClubPage extends ConsumerWidget {
           ),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _StatusBanner(userClub: userClub),
-          const SizedBox(height: 24),
-          Text(
-            'Activités',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          const Center(
-            child: Text('Les activités arrivent bientôt...'),
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(myClubsProvider);
+          await ref.read(myClubsProvider.future);
+        },
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _StatusBanner(userClub: userClub),
+            const SizedBox(height: 24),
+            Text(
+              'Activités',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            const Center(
+              child: Text('Les activités arrivent bientôt...'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pole_mobile/core/models/club.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/core/network/dio_provider.dart';
 
@@ -20,4 +21,24 @@ class ClubsRepository {
         .map(UserClub.fromJson)
         .toList();
   }
+
+  Future<List<Club>> search(String query) async {
+    if (query.length < 2) return [];
+    final response = await _dio.get<List<dynamic>>(
+      '/clubs/search',
+      queryParameters: {'name': query},
+    );
+    return (response.data ?? [])
+        .cast<Map<String, dynamic>>()
+        .map(Club.fromJson)
+        .toList();
+  }
+
+  Future<void> joinByCode(String clubCode) async {
+    await _dio.post<void>(
+      '/user-clubs/join',
+      data: {'clubCode': clubCode},
+    );
+  }
 }
+
