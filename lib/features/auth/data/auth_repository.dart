@@ -21,14 +21,21 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
-    final response = await _dio.post<Map<String, dynamic>>(
-      '/mobile/login',
-      data: {'email': email, 'password': password},
-    );
-    final token = response.data?['token'] as String?;
-    if (token == null) throw Exception('Token absent de la réponse');
-    await _storage.write(StorageKeys.token, token);
-    return token;
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/mobile/login',
+        data: {'email': email, 'password': password},
+      );
+      final token = response.data?['token'] as String?;
+      if (token == null) throw Exception('Token absent de la réponse');
+      await _storage.write(StorageKeys.token, token);
+      return token;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        throw Exception('Email ou mot de passe incorrect');
+      }
+      throw Exception('Erreur réseau, réessaie plus tard');
+    }
   }
 
   /// Inscription → login automatique → retourne le token Bearer.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pole_mobile/features/activities/pages/activity_detail_page.dart';
 import 'package:pole_mobile/features/auth/pages/auth_landing_page.dart';
 import 'package:pole_mobile/features/auth/pages/login_page.dart';
 import 'package:pole_mobile/features/auth/pages/register_page.dart';
@@ -11,6 +12,7 @@ import 'package:pole_mobile/features/notifications/pages/notifications_page.dart
 import 'package:pole_mobile/features/profile/pages/profile_page.dart';
 import 'package:pole_mobile/features/shell/shell_page.dart';
 import 'package:pole_mobile/features/splash/splash_page.dart';
+
 
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = _RouterNotifier(ref);
@@ -58,6 +60,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const ProfilePage(),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/activity/:id',
+        builder: (_, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return ActivityDetailPage(activityId: id);
+        },
       ),
     ],
   );

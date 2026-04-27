@@ -21,13 +21,19 @@ class ActivitiesRepository {
   }
 
   Future<void> joinActivity(int activityId) async {
-    await _dio.post<void>('/activities/$activityId/join');
+    await _dio.post<void>(
+      '/activities/$activityId/join',
+      data: <String, dynamic>{},
+    );
   }
 
   Future<void> leaveActivity(int userActivityId) async {
     await _dio.patch<void>(
       '/user-activities/$userActivityId',
       data: {'status': 'LEFT'},
+      options: Options(
+        contentType: 'application/merge-patch+json',
+      ),
     );
   }
 }
