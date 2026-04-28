@@ -4,6 +4,7 @@ import 'package:pole_mobile/core/models/user_activity.dart';
 import 'package:pole_mobile/features/activities/data/activities_repository.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
+import 'package:pole_mobile/features/activities/widgets/level_accordion.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 
 class ActivityDetailPage extends ConsumerWidget {
@@ -49,6 +50,13 @@ class ActivityDetailPage extends ConsumerWidget {
                   activityId: activityId,
                   userActivity: userActivity,
                 ),
+                const SizedBox(height: 32),
+                Text(
+                  'Niveaux & skills',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                LevelAccordion(activityId: activityId),
               ],
             ),
     );

@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/core/env/env.dart';
 import 'package:pole_mobile/core/network/auth_interceptor.dart';
 import 'package:pole_mobile/core/network/error_interceptor.dart';
 import 'package:pole_mobile/core/storage/secure_storage.dart';
+import 'package:pole_mobile/features/auth/providers/session_provider.dart';
 
 /// Provider exposant le [SecureStorage] à toute l'app.
 final secureStorageProvider = Provider<SecureStorage>(
@@ -29,7 +32,13 @@ final dioProvider = Provider<Dio>((ref) {
 
   dio.interceptors.addAll([
     AuthInterceptor(storage),
-    ErrorInterceptor(),
+    ErrorInterceptor(
+      onUnauthorized: () {
+        // Supprime le token → le router redirige automatiquement vers /auth
+        unawaited(storage.delete(StorageKeys.token));
+        ref.invalidate(tokenProvider);
+      },
+    ),
     LogInterceptor(responseBody: true),
   ]);
 
