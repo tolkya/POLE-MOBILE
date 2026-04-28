@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/auth/data/auth_repository.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
@@ -48,7 +49,8 @@ class ProfilePage extends ConsumerWidget {
       ref
         ..invalidate(meProvider)
         ..invalidate(myClubsProvider)
-        ..invalidate(activeClubIdProvider);
+        ..invalidate(activeClubIdProvider)
+        ..invalidate(myActivitiesProvider);
     if (context.mounted) context.go('/auth');
   }
 }
