@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
+import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/club_switcher/club_switcher_sheet.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
@@ -47,8 +48,13 @@ class HomeClubPage extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(myClubsProvider);
-          await ref.read(myClubsProvider.future);
+          ref
+          ..invalidate(myClubsProvider)
+          ..invalidate(myActivitiesProvider);
+          await Future.wait([
+            ref.read(myClubsProvider.future),
+            ref.read(myActivitiesProvider.future),
+          ]);
         },
         child: ListView(
           padding: const EdgeInsets.all(16),

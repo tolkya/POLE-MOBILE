@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
@@ -29,7 +30,11 @@ class MyActivitiesStrip extends ConsumerWidget {
       error: (e, _) => const SizedBox.shrink(),
       data: (activities) {
         final filtered = activities
-            .where((ua) => clubActivityIds.contains(ua.activity.id))
+            .where(
+              (ua) =>
+                clubActivityIds.contains(ua.activity.id) &&
+                ua.status == UserActivityStatus.approved,
+            )
             .toList();
         if (filtered.isEmpty) return const SizedBox.shrink();
         return Column(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/core/models/user_activity.dart';
 import 'package:pole_mobile/features/activities/data/activities_repository.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
@@ -20,6 +22,9 @@ class ActivityDetailPage extends ConsumerWidget {
     final userActivity = myActivities
         .where((ua) => ua.activity.id == activityId)
         .firstOrNull;
+    
+    final isApprovedMember =
+      userActivity?.status == UserActivityStatus.approved;
 
     final activitiesAsync = activeClub != null
         ? ref.watch(clubActivitiesProvider(activeClub.club.id))
@@ -33,32 +38,39 @@ class ActivityDetailPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(activity?.name ?? 'Activité'),
       ),
-      body: activity == null
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                if (activity.description != null &&
-                    activity.description!.isNotEmpty) ...[
-                  Text(
-                    activity.description!,
-                    style: Theme.of(context).textTheme.bodyMedium,
+      body: !isApprovedMember
+          ? const Center(
+              child: Text(
+                "Accès réservé aux membres validés de l'activité.",
+              ),
+            )
+          : activity == null
+              ? const Center(child: CircularProgressIndicator())
+              : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  if (activity.description != null &&
+                      activity.description!.isNotEmpty) ...[
+                    Text(
+                      activity.description!,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                  _JoinLeaveButton(
+                    activityId: activityId,
+                    userActivity: userActivity,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
+                  Text(
+                    'Niveaux & skills',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  LevelAccordion(activityId: activityId),
                 ],
-                _JoinLeaveButton(
-                  activityId: activityId,
-                  userActivity: userActivity,
-                ),
-                const SizedBox(height: 32),
-                Text(
-                  'Niveaux & skills',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                LevelAccordion(activityId: activityId),
-              ],
-            ),
+
+              ),
     );
   }
 }
@@ -104,6 +116,7 @@ class _JoinLeaveButtonState extends ConsumerState<_JoinLeaveButton> {
           .read(activitiesRepositoryProvider)
           .leaveActivity(widget.userActivity!.id);
       ref.invalidate(myActivitiesProvider);
+      if (mounted) context.go('/home');
     } on Exception catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +130,8 @@ class _JoinLeaveButtonState extends ConsumerState<_JoinLeaveButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isJoined = widget.userActivity != null;
+    final isJoined =
+      widget.userActivity?.status == UserActivityStatus.approved;
 
     if (_loading) {
       return const Center(child: CircularProgressIndicator());

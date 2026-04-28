@@ -36,4 +36,18 @@ class ActivitiesRepository {
       ),
     );
   }
+  
+  Future<void> cancelRequest(int userActivityId) async {
+    await _dio.delete<void>('/user-activities/$userActivityId');
+  }
+
+  Future<void> reRequestActivity(int userActivityId) async {
+    await _dio.patch<void>(
+      '/user-activities/$userActivityId',
+      data: {'status': 'PENDING'},
+      options: Options(
+        contentType: 'application/merge-patch+json',
+      ),
+    );
+  }
 }
