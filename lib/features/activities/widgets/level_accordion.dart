@@ -8,6 +8,7 @@ import 'package:pole_mobile/core/models/level.dart';
 import 'package:pole_mobile/core/models/skill.dart';
 import 'package:pole_mobile/core/models/skill_media_tuto.dart';
 import 'package:pole_mobile/core/network/media_url.dart';
+import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/providers/levels_provider.dart';
 import 'package:pole_mobile/features/activities/providers/skills_provider.dart';
 import 'package:video_player/video_player.dart';
@@ -21,16 +22,19 @@ class LevelAccordion extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final levelsAsync = ref.watch(levelsProvider(activityId));
     final theme = Theme.of(context);
+    final ct = ref.watch(clubThemeProvider);
 
     return levelsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(
+        child: CircularProgressIndicator(color: ct.primary),
+      ),
       error: (e, _) => Center(child: Text('Erreur niveaux : $e')),
       data: (levels) {
         if (levels.isEmpty) {
           return Text(
             'Aucun niveau défini pour cette activité',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+              color: ct.dark.withValues(alpha: 0.7),
             ),
           );
         }
@@ -59,9 +63,14 @@ class _LevelTileState extends ConsumerState<_LevelTile> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ct = ref.watch(clubThemeProvider);
 
     return ExpansionTile(
       title: Text(widget.level.name, style: theme.textTheme.titleSmall),
+      iconColor: ct.primary,
+      collapsedIconColor: ct.dark,
+      collapsedBackgroundColor: ct.surface,
+      backgroundColor: ct.subtle,
       subtitle: widget.level.description != null
           ? Text(
               widget.level.description!,
@@ -118,20 +127,25 @@ class _SkillsList extends ConsumerWidget {
   }
 }
 
-class _SkillCard extends StatelessWidget {
+class _SkillCard extends ConsumerWidget {
   const _SkillCard({required this.skill});
 
   final Skill skill;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final ct = ref.watch(clubThemeProvider);
     final medias = skill.skillMediaTutos
         .where((t) => t.mediaUrl != null)
         .toList();
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: ct.border),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/core/models/user_activity.dart';
+import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/data/activities_repository.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
@@ -11,12 +12,14 @@ import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 
 class ActivityDetailPage extends ConsumerWidget {
   const ActivityDetailPage({required this.activityId, super.key});
+  
 
   final int activityId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeClub = ref.watch(activeUserClubProvider);
+    final ct = ref.watch(clubThemeProvider);
     final myActivities = ref.watch(myActivitiesProvider).asData?.value ?? [];
 
     final userActivity = myActivities
@@ -37,15 +40,22 @@ class ActivityDetailPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(activity?.name ?? 'Activité'),
+        backgroundColor: ct.primary,
+        foregroundColor: ct.onPrimary,
+        iconTheme: IconThemeData(color: ct.onPrimary),
       ),
       body: !isApprovedMember
-          ? const Center(
+          ? Center(
               child: Text(
                 "Accès réservé aux membres validés de l'activité.",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: ct.dark,
+                ),
+                textAlign: TextAlign.center,
               ),
             )
           : activity == null
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(child: CircularProgressIndicator(color: ct.primary))
               : ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -64,7 +74,10 @@ class ActivityDetailPage extends ConsumerWidget {
                   const SizedBox(height: 32),
                   Text(
                     'Niveaux & skills',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: ct.dark,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   LevelAccordion(activityId: activityId),
@@ -132,6 +145,7 @@ class _JoinLeaveButtonState extends ConsumerState<_JoinLeaveButton> {
   Widget build(BuildContext context) {
     final isJoined =
       widget.userActivity?.status == UserActivityStatus.approved;
+    final ct = ref.watch(clubThemeProvider);
 
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
@@ -152,6 +166,10 @@ class _JoinLeaveButtonState extends ConsumerState<_JoinLeaveButton> {
       onPressed: _join,
       icon: const Icon(Icons.add),
       label: const Text("S'inscrire"),
+      style: FilledButton.styleFrom(
+        backgroundColor: ct.primary,
+        foregroundColor: ct.onPrimary,
+      ),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/core/models/enums.dart';
+import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
@@ -13,6 +14,7 @@ class MyActivitiesStrip extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final myActivitiesAsync = ref.watch(myActivitiesProvider);
     final activeClub = ref.watch(activeUserClubProvider);
+    final ct = ref.watch(clubThemeProvider);
     final theme = Theme.of(context);
 
     if (activeClub == null) return const SizedBox.shrink();
@@ -59,7 +61,7 @@ class MyActivitiesStrip extends ConsumerWidget {
                       width: 120,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.secondaryContainer,
+                        color: ct.subtle,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
@@ -68,8 +70,7 @@ class MyActivitiesStrip extends ConsumerWidget {
                           Text(
                             ua.activity.name,
                             style: theme.textTheme.labelMedium?.copyWith(
-                              color:
-                                  theme.colorScheme.onSecondaryContainer,
+                              color: ct.dark,
                             ),
                             textAlign: TextAlign.center,
                             maxLines: 2,

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/core/models/user_activity.dart';
+import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/data/activities_repository.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 
@@ -97,6 +98,7 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ct = ref.watch(clubThemeProvider);
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -111,13 +113,13 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundColor: theme.colorScheme.primaryContainer,
+                    backgroundColor: ct.subtle,
                     child: Text(
                       widget.activity.name
                           .substring(0, 1)
                           .toUpperCase(),
                       style: TextStyle(
-                        color: theme.colorScheme.onPrimaryContainer,
+                        color: ct.dark,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -137,14 +139,14 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
               if (_isApproved)
                 _StatusBadge(
                   label: 'Inscrit',
-                  color: Colors.green.shade100,
-                  textColor: Colors.green.shade800,
+                  color: ct.subtle,
+                  textColor: ct.dark,
                 )
               else if (_isPending)
                 _StatusBadge(
                   label: 'En attente',
-                  color: theme.colorScheme.tertiaryContainer,
-                  textColor: theme.colorScheme.onTertiaryContainer,
+                  color: ct.subtle,
+                  textColor: ct.dark.withValues(alpha: 0.6),
                 )
               else if (_isRejected)
                 _StatusBadge(
@@ -164,11 +166,15 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
               else if (_isNotJoined)
                 SizedBox(
                   width: double.infinity,
-                  child: FilledButton.tonal(
+                  child: FilledButton(
                     onPressed: (_isRejected || _isLeft) ? _reRequest : _join,
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       textStyle: theme.textTheme.labelSmall,
+                      backgroundColor: ct.primary,
+                      foregroundColor: ct.onPrimary,
+                      disabledBackgroundColor: ct.subtle,
+                      disabledForegroundColor: ct.dark.withValues(alpha: 0.6),
                     ),
                     child: const Text("S'inscrire"),
                   ),
@@ -181,7 +187,9 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       textStyle: theme.textTheme.labelSmall,
-                      foregroundColor: theme.colorScheme.error,
+                      foregroundColor: ct.dark,
+                      side: BorderSide(color: ct.border),
+                      backgroundColor: ct.subtle.withValues(alpha: 0.05),
                     ),
                     child: const Text('Annuler'),
                   ),

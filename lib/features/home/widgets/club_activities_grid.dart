@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
@@ -15,41 +16,59 @@ class ClubActivitiesGrid extends ConsumerWidget {
     final activitiesAsync =
         ref.watch(clubActivitiesProvider(activeClub.club.id));
     final myActivities = ref.watch(myActivitiesProvider).asData?.value ?? [];
+    final ct = ref.watch(clubThemeProvider);
     
     return activitiesAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Erreur : $e')),
+      loading: () => Center(
+        child: CircularProgressIndicator(color: ct.primary),
+      ),
+      error: (e, _) => Center(
+        child: Text(
+          'Erreur : $e',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: ct.dark,
+              ),
+        ),
+      ),
       data: (activities) {
         if (activities.isEmpty) {
           return Center(
             child: Text(
               'Aucune activité dans ce club',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: ct.dark.withValues(alpha: 0.7),
                   ),
             ),
           );
         }
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.1,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
+        return Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: ct.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: ct.border),
           ),
-          itemCount: activities.length,
-          itemBuilder: (_, index) {
-            final activity = activities[index];
-            final userActivity = myActivities
-                .where((ua) => ua.activity.id == activity.id)
-                .firstOrNull;
-            return ActivityCard(
-              activity: activity,
-              userActivity: userActivity,
-            );
-          },
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.1,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: activities.length,
+            itemBuilder: (_, index) {
+              final activity = activities[index];
+              final userActivity = myActivities
+                  .where((ua) => ua.activity.id == activity.id)
+                  .firstOrNull;
+              return ActivityCard(
+                activity: activity,
+                userActivity: userActivity,
+              );
+            },
+          ),
         );
       },
     );
