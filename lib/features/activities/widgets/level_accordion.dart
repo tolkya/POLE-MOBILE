@@ -39,9 +39,22 @@ class LevelAccordion extends ConsumerWidget {
           );
         }
         return Column(
-          children: levels
-              .map((level) => _LevelTile(level: level))
-              .toList(),
+          children: levels.asMap().entries.map((entry) {
+            final index = entry.key;
+            final level = entry.value;
+
+            return Column(
+              children: [
+                _LevelTile(level: level),
+                if (index < levels.length - 1)
+                  Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: ct.border,
+                  ),
+              ],
+            );
+          }).toList(),
         );
       },
     );
@@ -71,9 +84,9 @@ class _LevelTileState extends ConsumerState<_LevelTile> {
       collapsedIconColor: ct.dark,
       collapsedBackgroundColor: ct.surface,
       backgroundColor: ct.subtle,
-      subtitle: widget.level.description != null
+      subtitle: widget.level.description?.isNotEmpty == true
           ? Text(
-              widget.level.description!,
+              widget.level.description ?? '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodySmall,
@@ -243,7 +256,20 @@ class _MediaThumbnail extends StatelessWidget {
           width: 160,
           height: 160,
           child: _isVideo
-              ? _VideoThumbnail(url: url)
+              ? const Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ColoredBox(color: Colors.black),
+                    ColoredBox(color: Colors.black12),
+                    Center(
+                      child: Icon(
+                        Icons.play_circle_filled,
+                        color: Colors.white,
+                        size: 48,
+                      ),
+                    ),
+                  ],
+                )
               : CachedNetworkImage(
                   imageUrl: url,
                   fit: BoxFit.cover,
