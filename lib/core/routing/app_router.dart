@@ -6,6 +6,7 @@ import 'package:pole_mobile/features/auth/pages/auth_landing_page.dart';
 import 'package:pole_mobile/features/auth/pages/login_page.dart';
 import 'package:pole_mobile/features/auth/pages/register_page.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
+import 'package:pole_mobile/features/discover/pages/club_public_page.dart';
 import 'package:pole_mobile/features/discover/pages/discover_page.dart';
 import 'package:pole_mobile/features/home/pages/home_page.dart';
 import 'package:pole_mobile/features/notifications/pages/notifications_page.dart';
@@ -67,6 +68,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, state) {
           final id = int.parse(state.pathParameters['id']!);
           return ActivityDetailPage(activityId: id);
+        },
+      ),
+      GoRoute(
+        path: '/clubs/:id',
+        builder: (_, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return ClubPublicPage(clubId: id);
         },
       ),
     ],

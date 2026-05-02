@@ -51,5 +51,14 @@ class ClubsRepository {
         .map(Activity.fromJson)
         .toList();
   }
+
+  Future<Club> getClub(int clubId) async {
+    final response = await _dio.get<Map<String, dynamic>>('/clubs/$clubId');
+    return Club.fromJson(response.data!);
+  }
+
+  Future<void> cancelJoinRequest(int userClubId) async {
+    await _dio.delete<void>('/user-clubs/$userClubId');
+  }
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/features/clubs/providers/club_search_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
@@ -103,7 +104,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                                 ),
                                 title: Text(club.name),
                                 trailing: const Icon(Icons.chevron_right),
-                                onTap: () {},
+                                onTap: () => context.push('/clubs/${club.id}'),
                               );
                             },
                           ),

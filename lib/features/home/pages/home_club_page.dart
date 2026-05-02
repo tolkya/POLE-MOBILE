@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/club_switcher/club_switcher_sheet.dart';
+import 'package:pole_mobile/features/clubs/data/clubs_repository.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 import 'package:pole_mobile/features/home/widgets/club_activities_grid.dart';
@@ -19,6 +20,8 @@ class HomeClubPage extends ConsumerWidget {
     final hasMultipleClubs = clubs.length > 1;
 
     if (userClub == null) return const SizedBox.shrink();
+
+    final isPending = userClub.validatedAt == null;
 
     return Scaffold(
       appBar: AppBar(
@@ -64,13 +67,38 @@ class HomeClubPage extends ConsumerWidget {
             const SizedBox(height: 16),
             StatusBanner(userClub: userClub),
             const SizedBox(height: 24),
-            const MyActivitiesStrip(),
-            Text(
-              'Toutes les activités',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            const ClubActivitiesGrid(),
+            if (isPending) ...[
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    await ref
+                        .read(clubsRepositoryProvider)
+                        .cancelJoinRequest(userClub.id);
+                    ref
+                      ..invalidate(myClubsProvider)
+                      ..invalidate(activeClubIdProvider)
+                      ..invalidate(myActivitiesProvider);
+                  },
+                  icon: const Icon(Icons.close),
+                  label: const Text("Annuler ma demande d'adhésion"),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.error,
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+              ),
+            ] else ...[
+              const MyActivitiesStrip(),
+              Text(
+                'Toutes les activités',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              const ClubActivitiesGrid(),
+            ],
           ],
         ),
       ),

@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/core/models/club.dart';
 import 'package:pole_mobile/core/network/media_url.dart';
 import 'package:pole_mobile/core/theme/club_theme.dart';
-import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 
-class ClubHero extends ConsumerWidget {
+class ClubHero extends StatelessWidget {
   const ClubHero({required this.club, super.key});
 
   final Club club;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ct = ref.watch(clubThemeProvider);
+  Widget build(BuildContext context) {
+    final ct = ClubTheme.fromHex(club.themeColor);
 
     return Container(
       width: double.infinity,
