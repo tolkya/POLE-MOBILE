@@ -8,4 +8,8 @@ class MeNotifier extends AsyncNotifier<User> {
   @override
   Future<User> build() =>
       ref.read(profileRepositoryProvider).getMe();
+
+  void updateUser(User updated) {
+    state = AsyncData(updated);
+  }
 }

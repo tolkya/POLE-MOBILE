@@ -18,8 +18,8 @@ class NotificationsNotifier
     extends AsyncNotifier<List<NotificationReceipt>> {
   @override
   Future<List<NotificationReceipt>> build() async {
-     // Polling toutes les 30 secondes en foreground
-    final timer = Timer.periodic(const Duration(seconds: 30), (_) => refresh());
+     // Polling toutes les 30 minutes en foreground
+    final timer = Timer.periodic(const Duration(minutes: 30), (_) => refresh());
     ref.onDispose(timer.cancel);
     return ref.read(notificationsRepositoryProvider).getReceipts();
   }

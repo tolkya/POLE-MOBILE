@@ -16,4 +16,41 @@ class ProfileRepository {
     final response = await _dio.get<Map<String, dynamic>>('/me');
     return User.fromJson(response.data!);
   }
+
+  Future<User> updateProfile({
+    required int userId,
+    String? firstName,
+    String? lastName,
+    String? phone,
+  }) async {
+    final response = await _dio.patch<Map<String, dynamic>>(
+      '/users/$userId',
+      data: {
+        'firstName': ?firstName,
+        'lastName': ?lastName,
+        'phone': ?phone,
+      },
+      options: Options(
+        headers: {'Content-Type': 'application/merge-patch+json'},
+      ),
+    );
+    return User.fromJson(response.data!);
+  }
+
+  Future<void> changePassword({
+    required int userId,
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    await _dio.patch<void>(
+      '/users/$userId/change-password',
+      data: {
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+      },
+      options: Options(
+        headers: {'Content-Type': 'application/merge-patch+json'},
+      ),
+    );
+  }
 }

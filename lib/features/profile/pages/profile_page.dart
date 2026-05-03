@@ -6,6 +6,9 @@ import 'package:pole_mobile/features/auth/data/auth_repository.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
+import 'package:pole_mobile/features/profile/pages/change_password_page.dart';
+import 'package:pole_mobile/features/profile/pages/edit_profile_page.dart';
+import 'package:pole_mobile/features/profile/pages/preferences_page.dart';
 import 'package:pole_mobile/features/profile/providers/me_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
@@ -14,6 +17,8 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final meAsync = ref.watch(meProvider);
+    final clubs = ref.watch(myClubsProvider).asData?.value ?? [];
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profil')),
@@ -21,15 +26,109 @@ class ProfilePage extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Erreur : $e')),
         data: (user) => ListView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(16),
           children: [
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: Text('${user.firstName} ${user.lastName}'),
-              subtitle: Text(user.email),
+            // Avatar + nom
+            Center(
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 36,
+                    child: Text(
+                      user.firstName.substring(0, 1).toUpperCase(),
+                      style: theme.textTheme.headlineMedium,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '${user.firstName} ${user.lastName}',
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  Text(
+                    user.email,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const Divider(),
+
+            const SizedBox(height: 24),
+
+            // Mes clubs
+            if (clubs.isNotEmpty) ...[
+              Text(
+                'Mes clubs',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...clubs.map(
+                (uc) => ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.groups_outlined),
+                  title: Text(uc.club.name),
+                  trailing: Wrap(
+                    spacing: 4,
+                    children: uc.roles
+                        .map(
+                          (r) => Chip(
+                            label: Text(
+                              r.name.toUpperCase(),
+                              style: theme.textTheme.labelSmall,
+                            ),
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+              const Divider(),
+            ],
+
+            // Actions
             ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Modifier le profil'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const EditProfilePage(),
+                ),
+              ),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.lock_outline),
+              title: const Text('Changer le mot de passe'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const ChangePasswordPage(),
+                ),
+              ),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.palette_outlined),
+              title: const Text('Préférences'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const PreferencesPage(),
+                ),
+              ),
+            ),
+
+            const Divider(),
+
+            ListTile(
+              contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text(
                 'Se déconnecter',
@@ -46,11 +145,11 @@ class ProfilePage extends ConsumerWidget {
   Future<void> _logout(WidgetRef ref, BuildContext context) async {
     await ref.read(authRepositoryProvider).logout();
     ref.read(tokenProvider.notifier).clearToken();
-      ref
-        ..invalidate(meProvider)
-        ..invalidate(myClubsProvider)
-        ..invalidate(activeClubIdProvider)
-        ..invalidate(myActivitiesProvider);
+    ref
+      ..invalidate(meProvider)
+      ..invalidate(myClubsProvider)
+      ..invalidate(activeClubIdProvider)
+      ..invalidate(myActivitiesProvider);
     if (context.mounted) context.go('/auth');
   }
 }
