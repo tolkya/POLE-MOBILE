@@ -42,15 +42,12 @@ class ProfileRepository {
     required String oldPassword,
     required String newPassword,
   }) async {
-    await _dio.patch<void>(
+    await _dio.post<void>(
       '/users/$userId/change-password',
       data: {
-        'oldPassword': oldPassword,
-        'newPassword': newPassword,
+        'currentPassword': oldPassword,
+        'plainPassword': newPassword,
       },
-      options: Options(
-        headers: {'Content-Type': 'application/merge-patch+json'},
-      ),
     );
   }
 }
