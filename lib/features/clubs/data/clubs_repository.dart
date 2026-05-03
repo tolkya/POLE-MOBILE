@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/models/club.dart';
+import 'package:pole_mobile/core/models/club_stats.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/core/network/dio_provider.dart';
 
@@ -59,6 +60,16 @@ class ClubsRepository {
 
   Future<void> cancelJoinRequest(int userClubId) async {
     await _dio.delete<void>('/user-clubs/$userClubId');
+  }
+
+  Future<void> leaveClub(int userClubId) async {
+    await _dio.delete<void>('/user-clubs/$userClubId');
+  }
+
+  Future<ClubStats> getClubStats(int clubId) async {
+    final response =
+        await _dio.get<Map<String, dynamic>>('/clubs/$clubId/stats');
+    return ClubStats.fromJson(response.data!);
   }
 }
 

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Club {
 
- int get id; String get name; String? get phone; String? get email; JoinPolicy? get joinPolicy; String? get themeColor; String? get clubCode; String? get logoUrl;
+ int get id; String get name; String? get phone; String? get email; String? get description; String? get street; String? get postalCode; String? get city; String? get country; JoinPolicy? get joinPolicy; String? get themeColor; String? get clubCode; String? get logoUrl;
 /// Create a copy of Club
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ClubCopyWith<Club> get copyWith => _$ClubCopyWithImpl<Club>(this as Club, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Club&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.email, email) || other.email == email)&&(identical(other.joinPolicy, joinPolicy) || other.joinPolicy == joinPolicy)&&(identical(other.themeColor, themeColor) || other.themeColor == themeColor)&&(identical(other.clubCode, clubCode) || other.clubCode == clubCode)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Club&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.email, email) || other.email == email)&&(identical(other.description, description) || other.description == description)&&(identical(other.street, street) || other.street == street)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.city, city) || other.city == city)&&(identical(other.country, country) || other.country == country)&&(identical(other.joinPolicy, joinPolicy) || other.joinPolicy == joinPolicy)&&(identical(other.themeColor, themeColor) || other.themeColor == themeColor)&&(identical(other.clubCode, clubCode) || other.clubCode == clubCode)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,phone,email,joinPolicy,themeColor,clubCode,logoUrl);
+int get hashCode => Object.hash(runtimeType,id,name,phone,email,description,street,postalCode,city,country,joinPolicy,themeColor,clubCode,logoUrl);
 
 @override
 String toString() {
-  return 'Club(id: $id, name: $name, phone: $phone, email: $email, joinPolicy: $joinPolicy, themeColor: $themeColor, clubCode: $clubCode, logoUrl: $logoUrl)';
+  return 'Club(id: $id, name: $name, phone: $phone, email: $email, description: $description, street: $street, postalCode: $postalCode, city: $city, country: $country, joinPolicy: $joinPolicy, themeColor: $themeColor, clubCode: $clubCode, logoUrl: $logoUrl)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ClubCopyWith<$Res>  {
   factory $ClubCopyWith(Club value, $Res Function(Club) _then) = _$ClubCopyWithImpl;
 @useResult
 $Res call({
- int id, String name, String? phone, String? email, JoinPolicy? joinPolicy, String? themeColor, String? clubCode, String? logoUrl
+ int id, String name, String? phone, String? email, String? description, String? street, String? postalCode, String? city, String? country, JoinPolicy? joinPolicy, String? themeColor, String? clubCode, String? logoUrl
 });
 
 
@@ -65,12 +65,17 @@ class _$ClubCopyWithImpl<$Res>
 
 /// Create a copy of Club
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? phone = freezed,Object? email = freezed,Object? joinPolicy = freezed,Object? themeColor = freezed,Object? clubCode = freezed,Object? logoUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? phone = freezed,Object? email = freezed,Object? description = freezed,Object? street = freezed,Object? postalCode = freezed,Object? city = freezed,Object? country = freezed,Object? joinPolicy = freezed,Object? themeColor = freezed,Object? clubCode = freezed,Object? logoUrl = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,street: freezed == street ? _self.street : street // ignore: cast_nullable_to_non_nullable
+as String?,postalCode: freezed == postalCode ? _self.postalCode : postalCode // ignore: cast_nullable_to_non_nullable
+as String?,city: freezed == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
+as String?,country: freezed == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
 as String?,joinPolicy: freezed == joinPolicy ? _self.joinPolicy : joinPolicy // ignore: cast_nullable_to_non_nullable
 as JoinPolicy?,themeColor: freezed == themeColor ? _self.themeColor : themeColor // ignore: cast_nullable_to_non_nullable
 as String?,clubCode: freezed == clubCode ? _self.clubCode : clubCode // ignore: cast_nullable_to_non_nullable
@@ -160,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  String? phone,  String? email,  JoinPolicy? joinPolicy,  String? themeColor,  String? clubCode,  String? logoUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  String? phone,  String? email,  String? description,  String? street,  String? postalCode,  String? city,  String? country,  JoinPolicy? joinPolicy,  String? themeColor,  String? clubCode,  String? logoUrl)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Club() when $default != null:
-return $default(_that.id,_that.name,_that.phone,_that.email,_that.joinPolicy,_that.themeColor,_that.clubCode,_that.logoUrl);case _:
+return $default(_that.id,_that.name,_that.phone,_that.email,_that.description,_that.street,_that.postalCode,_that.city,_that.country,_that.joinPolicy,_that.themeColor,_that.clubCode,_that.logoUrl);case _:
   return orElse();
 
 }
@@ -181,10 +186,10 @@ return $default(_that.id,_that.name,_that.phone,_that.email,_that.joinPolicy,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  String? phone,  String? email,  JoinPolicy? joinPolicy,  String? themeColor,  String? clubCode,  String? logoUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  String? phone,  String? email,  String? description,  String? street,  String? postalCode,  String? city,  String? country,  JoinPolicy? joinPolicy,  String? themeColor,  String? clubCode,  String? logoUrl)  $default,) {final _that = this;
 switch (_that) {
 case _Club():
-return $default(_that.id,_that.name,_that.phone,_that.email,_that.joinPolicy,_that.themeColor,_that.clubCode,_that.logoUrl);case _:
+return $default(_that.id,_that.name,_that.phone,_that.email,_that.description,_that.street,_that.postalCode,_that.city,_that.country,_that.joinPolicy,_that.themeColor,_that.clubCode,_that.logoUrl);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +206,10 @@ return $default(_that.id,_that.name,_that.phone,_that.email,_that.joinPolicy,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  String? phone,  String? email,  JoinPolicy? joinPolicy,  String? themeColor,  String? clubCode,  String? logoUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  String? phone,  String? email,  String? description,  String? street,  String? postalCode,  String? city,  String? country,  JoinPolicy? joinPolicy,  String? themeColor,  String? clubCode,  String? logoUrl)?  $default,) {final _that = this;
 switch (_that) {
 case _Club() when $default != null:
-return $default(_that.id,_that.name,_that.phone,_that.email,_that.joinPolicy,_that.themeColor,_that.clubCode,_that.logoUrl);case _:
+return $default(_that.id,_that.name,_that.phone,_that.email,_that.description,_that.street,_that.postalCode,_that.city,_that.country,_that.joinPolicy,_that.themeColor,_that.clubCode,_that.logoUrl);case _:
   return null;
 
 }
@@ -216,13 +221,18 @@ return $default(_that.id,_that.name,_that.phone,_that.email,_that.joinPolicy,_th
 @JsonSerializable()
 
 class _Club implements Club {
-  const _Club({required this.id, required this.name, this.phone, this.email, this.joinPolicy, this.themeColor, this.clubCode, this.logoUrl});
+  const _Club({required this.id, required this.name, this.phone, this.email, this.description, this.street, this.postalCode, this.city, this.country, this.joinPolicy, this.themeColor, this.clubCode, this.logoUrl});
   factory _Club.fromJson(Map<String, dynamic> json) => _$ClubFromJson(json);
 
 @override final  int id;
 @override final  String name;
 @override final  String? phone;
 @override final  String? email;
+@override final  String? description;
+@override final  String? street;
+@override final  String? postalCode;
+@override final  String? city;
+@override final  String? country;
 @override final  JoinPolicy? joinPolicy;
 @override final  String? themeColor;
 @override final  String? clubCode;
@@ -241,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Club&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.email, email) || other.email == email)&&(identical(other.joinPolicy, joinPolicy) || other.joinPolicy == joinPolicy)&&(identical(other.themeColor, themeColor) || other.themeColor == themeColor)&&(identical(other.clubCode, clubCode) || other.clubCode == clubCode)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Club&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.email, email) || other.email == email)&&(identical(other.description, description) || other.description == description)&&(identical(other.street, street) || other.street == street)&&(identical(other.postalCode, postalCode) || other.postalCode == postalCode)&&(identical(other.city, city) || other.city == city)&&(identical(other.country, country) || other.country == country)&&(identical(other.joinPolicy, joinPolicy) || other.joinPolicy == joinPolicy)&&(identical(other.themeColor, themeColor) || other.themeColor == themeColor)&&(identical(other.clubCode, clubCode) || other.clubCode == clubCode)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,phone,email,joinPolicy,themeColor,clubCode,logoUrl);
+int get hashCode => Object.hash(runtimeType,id,name,phone,email,description,street,postalCode,city,country,joinPolicy,themeColor,clubCode,logoUrl);
 
 @override
 String toString() {
-  return 'Club(id: $id, name: $name, phone: $phone, email: $email, joinPolicy: $joinPolicy, themeColor: $themeColor, clubCode: $clubCode, logoUrl: $logoUrl)';
+  return 'Club(id: $id, name: $name, phone: $phone, email: $email, description: $description, street: $street, postalCode: $postalCode, city: $city, country: $country, joinPolicy: $joinPolicy, themeColor: $themeColor, clubCode: $clubCode, logoUrl: $logoUrl)';
 }
 
 
@@ -261,7 +271,7 @@ abstract mixin class _$ClubCopyWith<$Res> implements $ClubCopyWith<$Res> {
   factory _$ClubCopyWith(_Club value, $Res Function(_Club) _then) = __$ClubCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String name, String? phone, String? email, JoinPolicy? joinPolicy, String? themeColor, String? clubCode, String? logoUrl
+ int id, String name, String? phone, String? email, String? description, String? street, String? postalCode, String? city, String? country, JoinPolicy? joinPolicy, String? themeColor, String? clubCode, String? logoUrl
 });
 
 
@@ -278,12 +288,17 @@ class __$ClubCopyWithImpl<$Res>
 
 /// Create a copy of Club
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? phone = freezed,Object? email = freezed,Object? joinPolicy = freezed,Object? themeColor = freezed,Object? clubCode = freezed,Object? logoUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? phone = freezed,Object? email = freezed,Object? description = freezed,Object? street = freezed,Object? postalCode = freezed,Object? city = freezed,Object? country = freezed,Object? joinPolicy = freezed,Object? themeColor = freezed,Object? clubCode = freezed,Object? logoUrl = freezed,}) {
   return _then(_Club(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String?,street: freezed == street ? _self.street : street // ignore: cast_nullable_to_non_nullable
+as String?,postalCode: freezed == postalCode ? _self.postalCode : postalCode // ignore: cast_nullable_to_non_nullable
+as String?,city: freezed == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
+as String?,country: freezed == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
 as String?,joinPolicy: freezed == joinPolicy ? _self.joinPolicy : joinPolicy // ignore: cast_nullable_to_non_nullable
 as JoinPolicy?,themeColor: freezed == themeColor ? _self.themeColor : themeColor // ignore: cast_nullable_to_non_nullable
 as String?,clubCode: freezed == clubCode ? _self.clubCode : clubCode // ignore: cast_nullable_to_non_nullable

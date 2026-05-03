@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/core/models/user_activity.dart';
+import 'package:pole_mobile/core/theme/club_theme.dart';
 import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/data/activities_repository.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
@@ -32,8 +33,6 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
   bool get _isPending => _status == UserActivityStatus.pending;
   bool get _isRejected => _status == UserActivityStatus.rejected;
   bool get _isLeft => _status == UserActivityStatus.left;
-  bool get _isNotJoined =>
-      widget.userActivity == null || _isRejected || _isLeft;
 
   Future<void> _join() async {
     setState(() => _loading = true);
@@ -95,6 +94,86 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
     }
   }
 
+  void _showActivityInfo() {
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (_) => Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.activity.name,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                (widget.activity.description != null &&
+                        widget.activity.description!.isNotEmpty)
+                    ? widget.activity.description!
+                    : 'Aucune description disponible pour cette activité.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooter(ThemeData theme, ClubTheme ct) {
+    if (_loading) {
+      return const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      );
+    }
+
+    if (_isApproved) {
+      return _StatusBadge(
+        label: 'Inscrit',
+        color: ct.subtle,
+        textColor: ct.dark,
+      );
+    }
+
+    if (_isPending) {
+      return SizedBox(
+        height: 30,
+        child: OutlinedButton(
+          onPressed: _cancelRequest,
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            textStyle: theme.textTheme.labelSmall,
+            foregroundColor: ct.dark,
+            side: BorderSide(color: ct.border),
+            backgroundColor: ct.subtle.withValues(alpha: 0.05),
+          ),
+          child: const Text('Annuler'),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 30,
+      child: FilledButton(
+        onPressed: (_isRejected || _isLeft) ? _reRequest : _join,
+        style: FilledButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          textStyle: theme.textTheme.labelSmall,
+          backgroundColor: ct.primary,
+          foregroundColor: ct.onPrimary,
+          disabledBackgroundColor: ct.subtle,
+          disabledForegroundColor: ct.dark.withValues(alpha: 0.6),
+        ),
+        child: const Text("S'inscrire"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -105,95 +184,56 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
       child: InkWell(
         onTap: _isApproved ? _onTap : null,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(10),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 20,
+                    radius: 16,
                     backgroundColor: ct.subtle,
                     child: Text(
-                      widget.activity.name
-                          .substring(0, 1)
-                          .toUpperCase(),
+                      widget.activity.name.substring(0, 1).toUpperCase(),
                       style: TextStyle(
                         color: ct.dark,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       widget.activity.name,
                       style: theme.textTheme.titleSmall,
                       maxLines: 2,
+                      softWrap: true,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Infos activité',
+                    icon: Icon(
+                      Icons.info_outline,
+                      size: 18,
+                      color: ct.dark,
+                    ),
+                    onPressed: _showActivityInfo,
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 28,
+                      minHeight: 28,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
-              if (_isApproved)
-                _StatusBadge(
-                  label: 'Inscrit',
-                  color: ct.subtle,
-                  textColor: ct.dark,
-                )
-              else if (_isPending)
-                _StatusBadge(
-                  label: 'En attente',
-                  color: ct.subtle,
-                  textColor: ct.dark.withValues(alpha: 0.6),
-                )
-              else if (_isRejected)
-                _StatusBadge(
-                  label: 'Refusé',
-                  color: theme.colorScheme.errorContainer,
-                  textColor: theme.colorScheme.onErrorContainer,
-                ),
-              const Spacer(),
-              if (_loading)
-                const Center(
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              else if (_isNotJoined)
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: (_isRejected || _isLeft) ? _reRequest : _join,
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      textStyle: theme.textTheme.labelSmall,
-                      backgroundColor: ct.primary,
-                      foregroundColor: ct.onPrimary,
-                      disabledBackgroundColor: ct.subtle,
-                      disabledForegroundColor: ct.dark.withValues(alpha: 0.6),
-                    ),
-                    child: const Text("S'inscrire"),
-                  ),
-                )
-              else if (_isPending)
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: _cancelRequest,
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      textStyle: theme.textTheme.labelSmall,
-                      foregroundColor: ct.dark,
-                      side: BorderSide(color: ct.border),
-                      backgroundColor: ct.subtle.withValues(alpha: 0.05),
-                    ),
-                    child: const Text('Annuler'),
-                  ),
-                ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: _buildFooter(theme, ct),
+              ),
             ],
           ),
         ),

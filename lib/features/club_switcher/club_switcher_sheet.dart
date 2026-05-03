@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
+import 'package:pole_mobile/core/network/media_url.dart';
+import 'package:pole_mobile/core/theme/club_theme.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 
@@ -83,21 +85,74 @@ class _ClubTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ct = ClubTheme.fromHex(userClub.club.themeColor);
+    final logoUrl = userClub.club.logoUrl;
 
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: theme.colorScheme.primaryContainer,
-        child: Text(
-          userClub.club.name.substring(0, 1).toUpperCase(),
-          style: TextStyle(color: theme.colorScheme.onPrimaryContainer),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: ct.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isActive ? ct.primary : ct.border,
+                width: isActive ? 2 : 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: ct.primary,
+                  backgroundImage: (logoUrl != null && logoUrl.isNotEmpty)
+                      ? NetworkImage(resolveMediaUrl(logoUrl))
+                      : null,
+                  child: (logoUrl == null || logoUrl.isEmpty)
+                      ? Text(
+                          userClub.club.name.substring(0, 1).toUpperCase(),
+                          style: TextStyle(
+                            color: ct.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userClub.club.name,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: ct.dark,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        userClub.roles.map((r) => r.name).join(', '),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: ct.dark.withValues(alpha: 0.7),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                if (isActive)
+                  Icon(Icons.check_circle, color: ct.primary),
+              ],
+            ),
+          ),
         ),
       ),
-      title: Text(userClub.club.name),
-      subtitle: Text(userClub.roles.map((r) => r.name).join(', ')),
-      trailing: isActive
-          ? Icon(Icons.check_circle, color: theme.colorScheme.primary)
-          : null,
-      onTap: onTap,
     );
   }
 }

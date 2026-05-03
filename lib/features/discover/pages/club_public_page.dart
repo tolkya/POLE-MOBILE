@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/models/club.dart';
+import 'package:pole_mobile/core/models/club_stats.dart';
 import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/features/clubs/data/clubs_repository.dart';
@@ -15,6 +17,16 @@ import 'package:pole_mobile/features/home/widgets/club_hero.dart';
 final FutureProviderFamily<Club, int> _clubPublicProvider =
     FutureProvider.autoDispose.family<Club, int>((ref, clubId) async {
   return ref.read(clubsRepositoryProvider).getClub(clubId);
+});
+
+final FutureProviderFamily<ClubStats, int> _clubStatsProvider =
+    FutureProvider.autoDispose.family<ClubStats, int>((ref, clubId) async {
+  return ref.read(clubsRepositoryProvider).getClubStats(clubId);
+});
+
+final FutureProviderFamily<List<Activity>, int> _clubActivitiesProvider =
+    FutureProvider.autoDispose.family<List<Activity>, int>((ref, clubId) async {
+  return ref.read(clubsRepositoryProvider).getClubActivities(clubId);
 });
 
 class ClubPublicPage extends ConsumerStatefulWidget {
@@ -92,6 +104,8 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
   @override
   Widget build(BuildContext context) {
     final clubAsync = ref.watch(_clubPublicProvider(widget.clubId));
+    final statsAsync = ref.watch(_clubStatsProvider(widget.clubId));
+    final activitiesAsync = ref.watch(_clubActivitiesProvider(widget.clubId));
     final myClubs = ref.watch(myClubsProvider).asData?.value ?? [];
     final theme = Theme.of(context);
 
@@ -112,6 +126,19 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
               userClub != null && userClub.validatedAt != null;
           final isPrivate =
               club.joinPolicy == JoinPolicy.manualValidation;
+            final activities =
+              activitiesAsync.asData?.value ?? const <Activity>[];
+          final disciplineNames = activities
+              .map((activity) => activity.activityType?.name)
+              .whereType<String>()
+              .toSet()
+              .toList()
+            ..sort();
+          final groupedActivities = <String, List<Activity>>{};
+          for (final activity in activities) {
+            final discipline = activity.activityType?.name ?? 'Autres';
+            groupedActivities.putIfAbsent(discipline, () => []).add(activity);
+          }
 
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -119,7 +146,58 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
               ClubHero(club: club),
               const SizedBox(height: 16),
 
-              // Infos de contact
+              // Stats
+              statsAsync.maybeWhen(
+                data: (stats) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceAround,
+                    children: [
+                      _StatChip(
+                        label: 'Membres',
+                        value: stats.membersCount,
+                        icon: Icons.people_outline,
+                      ),
+                      _StatChip(
+                        label: 'Activités',
+                        value: stats.activitiesCount,
+                        icon: Icons.sports_gymnastics,
+                      ),
+                      _StatChip(
+                        label: 'Profs',
+                        value: stats.teachersCount,
+                        icon: Icons.school_outlined,
+                      ),
+                    ],
+                  ),
+                ),
+                orElse: () => const SizedBox.shrink(),
+              ),
+              if (disciplineNames.isNotEmpty) ...[
+                Text(
+                  'Disciplines principales',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: disciplineNames
+                      .map((name) => Chip(label: Text(name)))
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+              ],
+              if (_cityCountryLine(club).isNotEmpty) ...[
+                _InfoRow(
+                  icon: Icons.location_on_outlined,
+                  text: _cityCountryLine(club),
+                ),
+                const SizedBox(height: 8),
+              ],
               if (club.email != null && club.email!.isNotEmpty) ...[
                 _InfoRow(
                   icon: Icons.email_outlined,
@@ -134,8 +212,21 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
                 ),
                 const SizedBox(height: 8),
               ],
-
-              const SizedBox(height: 24),
+              if (club.description != null && club.description!.isNotEmpty) ...[
+                Text(
+                  'Description',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  club.description!,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 24),
+              ] else
+                const SizedBox(height: 24),
 
               // Cas 1 : déjà membre validé
               if (isMember) ...[
@@ -199,7 +290,9 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
                 _Notice(
                   icon: Icons.lock_outline,
                   text:
-                      'Club privé — votre demande sera soumise à validation.',
+                      'Ce club partage ses informations principales, '
+                      'mais le détail des activités reste réservé '
+                      'aux membres.',
                   color: theme.colorScheme.surfaceContainerHighest,
                   textColor: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -211,9 +304,45 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
 
               // Cas 4 : club public, non membre
               ] else ...[
+                if (groupedActivities.isNotEmpty) ...[
+                  Text(
+                    'Activités par discipline',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  ...groupedActivities.entries.map(
+                    (entry) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            entry.key,
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: entry.value
+                                .take(4)
+                                .map(
+                                  (activity) => Chip(
+                                    label: Text(activity.name),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
                 _Notice(
                   icon: Icons.lock_open_outlined,
-                  text: 'Club public — vous pouvez rejoindre immédiatement.',
+                  text:
+                      'Club public — vous pouvez rejoindre immédiatement '
+                      'et explorer davantage son contenu.',
                   color: theme.colorScheme.primaryContainer,
                   textColor: theme.colorScheme.onPrimaryContainer,
                 ),
@@ -229,6 +358,14 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
       ),
     );
   }
+}
+
+String _cityCountryLine(Club club) {
+  final parts = <String>[
+    if (club.city != null && club.city!.isNotEmpty) club.city!,
+    if (club.country != null && club.country!.isNotEmpty) club.country!,
+  ];
+  return parts.join(', ');
 }
 
 class _JoinButton extends StatelessWidget {
@@ -319,6 +456,40 @@ class _InfoRow extends StatelessWidget {
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  const _StatChip({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final int value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Icon(icon, color: theme.colorScheme.primary),
+        const SizedBox(height: 4),
+        Text(
+          '$value',
+          style: theme.textTheme.titleMedium
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
       ],

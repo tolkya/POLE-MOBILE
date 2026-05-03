@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
@@ -41,36 +44,144 @@ class ClubActivitiesGrid extends ConsumerWidget {
             ),
           );
         }
-        return Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: ct.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: ct.border),
-          ),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.1,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: activities.length,
-            itemBuilder: (_, index) {
-              final activity = activities[index];
-              final userActivity = myActivities
-                  .where((ua) => ua.activity.id == activity.id)
-                  .firstOrNull;
-              return ActivityCard(
-                activity: activity,
-                userActivity: userActivity,
-              );
-            },
-          ),
+        final groupedEntries = _groupedActivities(activities);
+        return Column(
+          children: List.generate(groupedEntries.length, (index) {
+            final entry = groupedEntries[index];
+            return Container(
+              margin: EdgeInsets.only(
+                bottom:
+                    index == groupedEntries.length - 1 ? 0 : 16,
+              ),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: ct.subtle,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: ct.border, width: 2),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entry.name,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: ct.dark,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.2,
+                              ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Infos discipline',
+                        icon: Icon(
+                          Icons.info_outline,
+                          color: ct.dark,
+                          size: 20,
+                        ),
+                        onPressed: () => _showDisciplineInfo(
+                          context,
+                          entry.name,
+                          entry.description,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: entry.activities.length,
+                    separatorBuilder: (_, index) =>
+                        const SizedBox(height: 8),
+                    itemBuilder: (_, index) {
+                      final activity = entry.activities[index];
+                      final userActivity = myActivities
+                          .where((ua) => ua.activity.id == activity.id)
+                          .firstOrNull;
+                      return DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: ct.border),
+                        ),
+                        child: ActivityCard(
+                          activity: activity,
+                          userActivity: userActivity,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          }),
         );
       },
     );
   }
+
+  List<_DisciplineGroup> _groupedActivities(List<Activity> activities) {
+    final grouped = <String, _DisciplineGroup>{};
+    for (final activity in activities) {
+      final discipline = activity.activityType?.name ?? 'Autres';
+      final group = grouped.putIfAbsent(
+        discipline,
+        () => _DisciplineGroup(
+          name: discipline,
+          description: activity.activityType?.description,
+          activities: <Activity>[],
+        ),
+      );
+      group.activities.add(activity);
+    }
+    return grouped.values.toList();
+  }
+
+  void _showDisciplineInfo(
+    BuildContext context,
+    String disciplineName,
+    String? description,
+  ) {
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (_) => Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                disciplineName,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                (description != null && description.isNotEmpty)
+                    ? description
+                    : 'Aucune description disponible pour cette discipline.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DisciplineGroup {
+  _DisciplineGroup({
+    required this.name,
+    required this.description,
+    required this.activities,
+  });
+
+  final String name;
+  final String? description;
+  final List<Activity> activities;
 }

@@ -4,9 +4,10 @@ import 'package:pole_mobile/core/network/media_url.dart';
 import 'package:pole_mobile/core/theme/club_theme.dart';
 
 class ClubHero extends StatelessWidget {
-  const ClubHero({required this.club, super.key});
+  const ClubHero({required this.club, this.onInfo, super.key});
 
   final Club club;
+  final VoidCallback? onInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,13 @@ class ClubHero extends StatelessWidget {
                   ),
             ),
           ),
+          if (onInfo != null)
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              color: ct.onPrimary,
+              tooltip: 'Infos du club',
+              onPressed: onInfo,
+            ),
         ],
       ),
     );

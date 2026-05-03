@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/auth/data/auth_repository.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
+import 'package:pole_mobile/features/clubs/data/clubs_repository.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 import 'package:pole_mobile/features/profile/pages/change_password_page.dart';
 import 'package:pole_mobile/features/profile/pages/edit_profile_page.dart';
-import 'package:pole_mobile/features/profile/pages/preferences_page.dart';
 import 'package:pole_mobile/features/profile/providers/me_provider.dart';
+import 'package:pole_mobile/features/profile/providers/theme_mode_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -18,6 +20,7 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final meAsync = ref.watch(meProvider);
     final clubs = ref.watch(myClubsProvider).asData?.value ?? [];
+    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -70,20 +73,29 @@ class ProfilePage extends ConsumerWidget {
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.groups_outlined),
                   title: Text(uc.club.name),
-                  trailing: Wrap(
-                    spacing: 4,
-                    children: uc.roles
-                        .map(
-                          (r) => Chip(
-                            label: Text(
-                              r.name.toUpperCase(),
-                              style: theme.textTheme.labelSmall,
-                            ),
-                            padding: EdgeInsets.zero,
-                            visualDensity: VisualDensity.compact,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ...uc.roles.map(
+                        (r) => Chip(
+                          label: Text(
+                            r.name.toUpperCase(),
+                            style: theme.textTheme.labelSmall,
                           ),
-                        )
-                        .toList(),
+                          padding: EdgeInsets.zero,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.exit_to_app,
+                          color: Colors.red,
+                        ),
+                        tooltip: 'Quitter ce club',
+                        onPressed: () =>
+                            _confirmLeave(ref, context, uc),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -113,16 +125,14 @@ class ProfilePage extends ConsumerWidget {
                 ),
               ),
             ),
-            ListTile(
+            SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.palette_outlined),
-              title: const Text('Préférences'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const PreferencesPage(),
-                ),
-              ),
+              secondary: const Icon(Icons.dark_mode_outlined),
+              title: const Text('Mode sombre'),
+              value: isDark,
+              onChanged: (v) => ref
+                  .read(themeModeProvider.notifier)
+                  .setMode(v ? ThemeMode.dark : ThemeMode.light),
             ),
 
             const Divider(),
@@ -140,6 +150,42 @@ class ProfilePage extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmLeave(
+    WidgetRef ref,
+    BuildContext context,
+    UserClub uc,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Quitter ce club ?'),
+        content: Text(
+          'Voulez-vous vraiment quitter "${uc.club.name}" ?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Quitter'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+    await ref.read(clubsRepositoryProvider).leaveClub(uc.id);
+    ref
+      ..invalidate(myClubsProvider)
+      ..invalidate(activeClubIdProvider)
+      ..invalidate(myActivitiesProvider);
   }
 
   Future<void> _logout(WidgetRef ref, BuildContext context) async {
