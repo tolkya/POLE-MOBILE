@@ -92,11 +92,8 @@ class _LevelTileState extends ConsumerState<_LevelTile> {
               style: theme.textTheme.bodySmall,
             )
           : null,
-      onExpansionChanged: (expanded) =>
-          setState(() => _expanded = expanded),
-      children: _expanded
-          ? [_SkillsList(levelId: widget.level.id)]
-          : [],
+      onExpansionChanged: (expanded) => setState(() => _expanded = expanded),
+      children: _expanded ? [_SkillsList(levelId: widget.level.id)] : [],
     );
   }
 }
@@ -256,20 +253,7 @@ class _MediaThumbnail extends StatelessWidget {
           width: 160,
           height: 160,
           child: _isVideo
-              ? const Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ColoredBox(color: Colors.black),
-                    ColoredBox(color: Colors.black12),
-                    Center(
-                      child: Icon(
-                        Icons.play_circle_filled,
-                        color: Colors.white,
-                        size: 48,
-                      ),
-                    ),
-                  ],
-                )
+              ? _VideoThumbnail(url: url)
               : CachedNetworkImage(
                   imageUrl: url,
                   fit: BoxFit.cover,
@@ -301,6 +285,7 @@ class _VideoThumbnail extends StatefulWidget {
 class _VideoThumbnailState extends State<_VideoThumbnail> {
   VideoPlayerController? _controller;
   bool _initialized = false;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -309,18 +294,24 @@ class _VideoThumbnailState extends State<_VideoThumbnail> {
   }
 
   Future<void> _init() async {
-    final controller = VideoPlayerController.networkUrl(
-      Uri.parse(widget.url),
-    );
-    await controller.initialize();
-    await controller.seekTo(Duration.zero);
-    if (mounted) {
-      setState(() {
-        _controller = controller;
-        _initialized = true;
-      });
-    } else {
-      unawaited(controller.dispose());
+    try {
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+      );
+      await controller.initialize();
+      await controller.seekTo(Duration.zero);
+      if (mounted) {
+        setState(() {
+          _controller = controller;
+          _initialized = true;
+        });
+      } else {
+        unawaited(controller.dispose());
+      }
+    } on Exception {
+      if (mounted) {
+        setState(() => _hasError = true);
+      }
     }
   }
 
@@ -332,6 +323,23 @@ class _VideoThumbnailState extends State<_VideoThumbnail> {
 
   @override
   Widget build(BuildContext context) {
+    if (_hasError) {
+      return const Stack(
+        fit: StackFit.expand,
+        children: [
+          ColoredBox(color: Colors.black),
+          ColoredBox(color: Color(0x44000000)),
+          Center(
+            child: Icon(
+              Icons.play_circle_filled,
+              color: Colors.white,
+              size: 48,
+            ),
+          ),
+        ],
+      );
+    }
+
     if (!_initialized || _controller == null) {
       return const ColoredBox(
         color: Colors.black,
