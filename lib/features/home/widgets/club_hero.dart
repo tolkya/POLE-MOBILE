@@ -28,9 +28,9 @@ class ClubHero extends StatelessWidget {
             child: Text(
               club.name,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: ct.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: ct.onPrimary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           if (onInfo != null)
@@ -80,9 +80,9 @@ class _ClubAvatar extends StatelessWidget {
       child: Text(
         club.name.substring(0, 1).toUpperCase(),
         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: ct.onPrimary,
-              fontWeight: FontWeight.bold,
-            ),
+          color: ct.onPrimary,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

@@ -18,8 +18,7 @@ class ChangePasswordPage extends ConsumerStatefulWidget {
   const ChangePasswordPage({super.key});
 
   @override
-  ConsumerState<ChangePasswordPage> createState() =>
-      _ChangePasswordPageState();
+  ConsumerState<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
 class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
@@ -46,11 +45,13 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
     setState(() => _loading = true);
     try {
       final user = ref.read(meProvider).asData!.value;
-      await ref.read(profileRepositoryProvider).changePassword(
-        userId: user.id,
-        oldPassword: _old.text,
-        newPassword: _new.text,
-      );
+      await ref
+          .read(profileRepositoryProvider)
+          .changePassword(
+            userId: user.id,
+            oldPassword: _old.text,
+            newPassword: _new.text,
+          );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Mot de passe modifié.')),
@@ -133,8 +134,7 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                   onPressed: () => setState(() => _showOld = !_showOld),
                 ),
               ),
-              validator: (v) =>
-                  (v == null || v.isEmpty) ? 'Requis' : null,
+              validator: (v) => (v == null || v.isEmpty) ? 'Requis' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -162,17 +162,14 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
                 labelText: 'Confirmer le mot de passe',
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _showConfirm
-                        ? Icons.visibility_off
-                        : Icons.visibility,
+                    _showConfirm ? Icons.visibility_off : Icons.visibility,
                   ),
-                  onPressed: () =>
-                      setState(() => _showConfirm = !_showConfirm),
+                  onPressed: () => setState(() => _showConfirm = !_showConfirm),
                 ),
               ),
               validator: (v) => v != _new.text
-                ? 'Les mots de passe ne correspondent pas'
-                : null,
+                  ? 'Les mots de passe ne correspondent pas'
+                  : null,
             ),
             const SizedBox(height: 32),
             FilledButton(

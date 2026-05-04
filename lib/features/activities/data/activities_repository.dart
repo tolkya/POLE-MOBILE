@@ -36,7 +36,7 @@ class ActivitiesRepository {
       ),
     );
   }
-  
+
   Future<void> cancelRequest(int userActivityId) async {
     await _dio.delete<void>('/user-activities/$userActivityId');
   }

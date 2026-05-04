@@ -88,9 +88,9 @@ class _RoleChip extends StatelessWidget {
       child: Text(
         label.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: ct.dark,
-              fontWeight: FontWeight.w600,
-            ),
+          color: ct.dark,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

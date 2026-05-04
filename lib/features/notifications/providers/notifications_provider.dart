@@ -6,19 +6,18 @@ import 'package:pole_mobile/features/notifications/data/notifications_repository
 
 final notificationsProvider =
     AsyncNotifierProvider<NotificationsNotifier, List<NotificationReceipt>>(
-  NotificationsNotifier.new,
-);
+      NotificationsNotifier.new,
+    );
 
 final unreadCountProvider = Provider<int>((ref) {
   final receipts = ref.watch(notificationsProvider).asData?.value ?? [];
   return receipts.where((r) => !r.isRead).length;
 });
 
-class NotificationsNotifier
-    extends AsyncNotifier<List<NotificationReceipt>> {
+class NotificationsNotifier extends AsyncNotifier<List<NotificationReceipt>> {
   @override
   Future<List<NotificationReceipt>> build() async {
-     // Polling toutes les 30 minutes en foreground
+    // Polling toutes les 30 minutes en foreground
     final timer = Timer.periodic(const Duration(minutes: 30), (_) => refresh());
     ref.onDispose(timer.cancel);
     return ref.read(notificationsRepositoryProvider).getReceipts();

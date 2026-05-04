@@ -18,10 +18,7 @@ class ClubsRepository {
   Future<List<UserClub>> getMyClubs() async {
     final response = await _dio.get<List<dynamic>>('/me/clubs');
     final members = response.data ?? [];
-    return members
-        .cast<Map<String, dynamic>>()
-        .map(UserClub.fromJson)
-        .toList();
+    return members.cast<Map<String, dynamic>>().map(UserClub.fromJson).toList();
   }
 
   Future<List<Club>> search(String query) async {
@@ -67,9 +64,9 @@ class ClubsRepository {
   }
 
   Future<ClubStats> getClubStats(int clubId) async {
-    final response =
-        await _dio.get<Map<String, dynamic>>('/clubs/$clubId/stats');
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/clubs/$clubId/stats',
+    );
     return ClubStats.fromJson(response.data!);
   }
 }
-

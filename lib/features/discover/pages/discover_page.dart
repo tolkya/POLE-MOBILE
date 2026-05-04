@@ -5,6 +5,9 @@ import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/features/clubs/providers/club_search_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 import 'package:pole_mobile/features/discover/sheets/join_by_code_sheet.dart';
+import 'package:pole_mobile/shared/widgets/empty_state.dart';
+import 'package:pole_mobile/shared/widgets/error_view.dart';
+import 'package:pole_mobile/shared/widgets/skeleton_loader.dart';
 
 class DiscoverPage extends ConsumerStatefulWidget {
   const DiscoverPage({super.key});
@@ -67,19 +70,34 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                     ),
                   )
                 : resultsAsync.when(
-                    loading: () => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    error: (e, _) =>
-                        Center(child: Text('Erreur : $e')),
-                    data: (clubs) => clubs.isEmpty
-                        ? Center(
-                            child: Text(
-                              'Aucun club trouvé pour "$query"',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
+                    loading: () => ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      itemCount: 6,
+                      itemBuilder: (context, index) => const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          children: [
+                            SkeletonBox(
+                              width: 40,
+                              height: 40,
+                              borderRadius: 20,
                             ),
+                            SizedBox(width: 12),
+                            Expanded(child: SkeletonBox(height: 16)),
+                            SizedBox(width: 12),
+                            SkeletonBox(width: 16, height: 16, borderRadius: 4),
+                          ],
+                        ),
+                      ),
+                    ),
+                    error: (e, _) => ErrorView(
+                      message: 'Impossible de charger les résultats.',
+                      onRetry: () => ref.invalidate(clubSearchResultsProvider),
+                    ),
+                    data: (clubs) => clubs.isEmpty
+                        ? EmptyState(
+                            message: 'Aucun club trouvé pour "$query".',
+                            icon: Icons.search_off_outlined,
                           )
                         : ListView.builder(
                             padding: const EdgeInsets.symmetric(
@@ -93,12 +111,10 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                                   backgroundColor:
                                       theme.colorScheme.primaryContainer,
                                   child: Text(
-                                    club.name
-                                        .substring(0, 1)
-                                        .toUpperCase(),
+                                    club.name.substring(0, 1).toUpperCase(),
                                     style: TextStyle(
-                                      color: theme.colorScheme
-                                          .onPrimaryContainer,
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
                                     ),
                                   ),
                                 ),

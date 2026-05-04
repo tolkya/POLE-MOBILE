@@ -9,10 +9,12 @@ import 'package:pole_mobile/features/activities/providers/club_activities_provid
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/activities/widgets/level_accordion.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
+import 'package:pole_mobile/shared/widgets/empty_state.dart';
+import 'package:pole_mobile/shared/widgets/error_view.dart';
+import 'package:pole_mobile/shared/widgets/skeleton_loader.dart';
 
 class ActivityDetailPage extends ConsumerWidget {
   const ActivityDetailPage({required this.activityId, super.key});
-  
 
   final int activityId;
 
@@ -25,9 +27,9 @@ class ActivityDetailPage extends ConsumerWidget {
     final userActivity = myActivities
         .where((ua) => ua.activity.id == activityId)
         .firstOrNull;
-    
+
     final isApprovedMember =
-      userActivity?.status == UserActivityStatus.approved;
+        userActivity?.status == UserActivityStatus.approved;
 
     final activitiesAsync = activeClub != null
         ? ref.watch(clubActivitiesProvider(activeClub.club.id))
@@ -54,36 +56,62 @@ class ActivityDetailPage extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
             )
-          : activity == null
-              ? Center(child: CircularProgressIndicator(color: ct.primary))
-              : ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  if (activity.description != null &&
-                      activity.description!.isNotEmpty) ...[
-                    Text(
-                      activity.description!,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                  _JoinLeaveButton(
-                    activityId: activityId,
-                    userActivity: userActivity,
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    'Niveaux & skills',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: ct.dark,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  LevelAccordion(activityId: activityId),
-                ],
-
+          : activitiesAsync == null || activitiesAsync.isLoading
+          ? ListView(
+              padding: const EdgeInsets.all(16),
+              children: const [
+                SkeletonBox(height: 18, width: 240),
+                SizedBox(height: 12),
+                SkeletonBox(height: 18),
+                SizedBox(height: 28),
+                SkeletonBox(height: 48, borderRadius: 12),
+                SizedBox(height: 28),
+                SkeletonBox(height: 20, width: 160),
+                SizedBox(height: 12),
+                SkeletonBox(height: 72, borderRadius: 12),
+                SizedBox(height: 12),
+                SkeletonBox(height: 72, borderRadius: 12),
+              ],
+            )
+          : activitiesAsync.hasError
+          ? ErrorView(
+              message: 'Impossible de charger cette activité.',
+              onRetry: () => ref.invalidate(
+                clubActivitiesProvider(activeClub!.club.id),
               ),
+            )
+          : activity == null
+          ? const EmptyState(
+              message: 'Activité introuvable.',
+              icon: Icons.sports_gymnastics_outlined,
+            )
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                if (activity.description != null &&
+                    activity.description!.isNotEmpty) ...[
+                  Text(
+                    activity.description!,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                _JoinLeaveButton(
+                  activityId: activityId,
+                  userActivity: userActivity,
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  'Niveaux & skills',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: ct.dark,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                LevelAccordion(activityId: activityId),
+              ],
+            ),
     );
   }
 }
@@ -143,8 +171,7 @@ class _JoinLeaveButtonState extends ConsumerState<_JoinLeaveButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isJoined =
-      widget.userActivity?.status == UserActivityStatus.approved;
+    final isJoined = widget.userActivity?.status == UserActivityStatus.approved;
     final ct = ref.watch(clubThemeProvider);
 
     if (_loading) {

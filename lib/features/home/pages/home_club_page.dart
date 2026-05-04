@@ -15,20 +15,22 @@ import 'package:pole_mobile/features/home/widgets/club_hero.dart';
 import 'package:pole_mobile/features/home/widgets/my_activities_strip.dart';
 import 'package:pole_mobile/features/home/widgets/status_banner.dart';
 
-final FutureProviderFamily<ClubStats, int> clubStatsProvider =
-    FutureProvider.autoDispose.family<ClubStats, int>((ref, clubId) async {
-  return ref.read(clubsRepositoryProvider).getClubStats(clubId);
-});
+final FutureProviderFamily<ClubStats, int> clubStatsProvider = FutureProvider
+    .autoDispose
+    .family<ClubStats, int>((ref, clubId) async {
+      return ref.read(clubsRepositoryProvider).getClubStats(clubId);
+    });
 
 final FutureProviderFamily<List<Activity>, int> clubInfoActivitiesProvider =
     FutureProvider.autoDispose.family<List<Activity>, int>((ref, clubId) async {
-  return ref.read(clubsRepositoryProvider).getClubActivities(clubId);
-});
+      return ref.read(clubsRepositoryProvider).getClubActivities(clubId);
+    });
 
-final FutureProviderFamily<Club, int> clubInfoProvider =
-    FutureProvider.autoDispose.family<Club, int>((ref, clubId) async {
-  return ref.read(clubsRepositoryProvider).getClub(clubId);
-});
+final FutureProviderFamily<Club, int> clubInfoProvider = FutureProvider
+    .autoDispose
+    .family<Club, int>((ref, clubId) async {
+      return ref.read(clubsRepositoryProvider).getClub(clubId);
+    });
 
 class HomeClubPage extends ConsumerWidget {
   const HomeClubPage({super.key});
@@ -69,10 +71,10 @@ class HomeClubPage extends ConsumerWidget {
               title: GestureDetector(
                 onTap: hasMultipleClubs
                     ? () => showModalBottomSheet<void>(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (_) => const ClubSwitcherSheet(),
-                        )
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (_) => const ClubSwitcherSheet(),
+                      )
                     : null,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -127,11 +129,11 @@ class HomeClubPage extends ConsumerWidget {
                               ..invalidate(myActivitiesProvider);
                           },
                           icon: const Icon(Icons.close),
-                          label:
-                              const Text("Annuler ma demande d'adhésion"),
+                          label: const Text("Annuler ma demande d'adhésion"),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor:
-                                Theme.of(context).colorScheme.error,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.error,
                             side: BorderSide(
                               color: Theme.of(context).colorScheme.error,
                             ),

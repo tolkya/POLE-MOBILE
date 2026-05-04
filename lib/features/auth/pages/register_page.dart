@@ -41,7 +41,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _loading = true);
     try {
-      final token = await ref.read(authRepositoryProvider).register(
+      final token = await ref
+          .read(authRepositoryProvider)
+          .register(
             firstName: _firstNameCtrl.text.trim(),
             lastName: _lastNameCtrl.text.trim(),
             email: _emailCtrl.text.trim(),
@@ -105,8 +107,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         Text(
                           'Crée ton compte Sparklib',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onPrimaryContainer
-                                .withAlpha(180),
+                            color: colorScheme.onPrimaryContainer.withAlpha(
+                              180,
+                            ),
                           ),
                         ),
                       ],
@@ -177,12 +180,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscure
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            _obscure ? Icons.visibility_off : Icons.visibility,
                           ),
-                          onPressed: () =>
-                              setState(() => _obscure = !_obscure),
+                          onPressed: () => setState(() => _obscure = !_obscure),
                         ),
                       ),
                       obscureText: _obscure,
@@ -198,8 +198,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         if (!RegExp('[0-9]').hasMatch(v)) {
                           return '1 chiffre requis';
                         }
-                        if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]')
-                            .hasMatch(v)) {
+                        if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(v)) {
                           return '1 symbole requis';
                         }
                         return null;
@@ -253,8 +252,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           style: theme.textTheme.bodyMedium,
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              context.pushReplacement('/auth/login'),
+                          onTap: () => context.pushReplacement('/auth/login'),
                           child: Text(
                             'Se connecter',
                             style: theme.textTheme.bodyMedium?.copyWith(

@@ -32,7 +32,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _loading = true);
     try {
-      final token = await ref.read(authRepositoryProvider).login(
+      final token = await ref
+          .read(authRepositoryProvider)
+          .login(
             email: _emailCtrl.text.trim(),
             password: _passwordCtrl.text,
           );
@@ -165,7 +167,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             style: theme.textTheme.bodyMedium,
                           ),
                           GestureDetector(
-                            onTap: () => context.pushReplacement('/auth/register'),
+                            onTap: () =>
+                                context.pushReplacement('/auth/register'),
                             child: Text(
                               "S'inscrire",
                               style: theme.textTheme.bodyMedium?.copyWith(

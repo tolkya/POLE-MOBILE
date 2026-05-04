@@ -6,8 +6,7 @@ import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 
 /// ID du club actif persisté en storage.
 /// null = pas encore choisi ou aucun club.
-final activeClubIdProvider =
-    AsyncNotifierProvider<ActiveClubIdNotifier, int?>(
+final activeClubIdProvider = AsyncNotifierProvider<ActiveClubIdNotifier, int?>(
   ActiveClubIdNotifier.new,
 );
 

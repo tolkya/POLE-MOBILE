@@ -19,7 +19,8 @@ class MyActivitiesStrip extends ConsumerWidget {
 
     if (activeClub == null) return const SizedBox.shrink();
 
-    final clubActivityIds = ref
+    final clubActivityIds =
+        ref
             .watch(clubActivitiesProvider(activeClub.club.id))
             .asData
             ?.value
@@ -34,8 +35,8 @@ class MyActivitiesStrip extends ConsumerWidget {
         final filtered = activities
             .where(
               (ua) =>
-                clubActivityIds.contains(ua.activity.id) &&
-                ua.status == UserActivityStatus.approved,
+                  clubActivityIds.contains(ua.activity.id) &&
+                  ua.status == UserActivityStatus.approved,
             )
             .toList();
         if (filtered.isEmpty) return const SizedBox.shrink();
@@ -49,13 +50,11 @@ class MyActivitiesStrip extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: filtered.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(width: 8),
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
                 itemBuilder: (_, index) {
                   final ua = filtered[index];
                   return InkWell(
-                    onTap: () =>
-                        context.push('/activity/${ua.activity.id}'),
+                    onTap: () => context.push('/activity/${ua.activity.id}'),
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       width: 120,

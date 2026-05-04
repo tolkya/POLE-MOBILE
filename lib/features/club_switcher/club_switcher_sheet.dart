@@ -146,8 +146,7 @@ class _ClubTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (isActive)
-                  Icon(Icons.check_circle, color: ct.primary),
+                if (isActive) Icon(Icons.check_circle, color: ct.primary),
               ],
             ),
           ),

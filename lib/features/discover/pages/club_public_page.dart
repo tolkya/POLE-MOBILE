@@ -13,21 +13,24 @@ import 'package:pole_mobile/features/clubs/data/clubs_repository.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 import 'package:pole_mobile/features/home/widgets/club_hero.dart';
+import 'package:pole_mobile/shared/widgets/error_view.dart';
 
-final FutureProviderFamily<Club, int> _clubPublicProvider =
-    FutureProvider.autoDispose.family<Club, int>((ref, clubId) async {
-  return ref.read(clubsRepositoryProvider).getClub(clubId);
-});
+final FutureProviderFamily<Club, int> _clubPublicProvider = FutureProvider
+    .autoDispose
+    .family<Club, int>((ref, clubId) async {
+      return ref.read(clubsRepositoryProvider).getClub(clubId);
+    });
 
-final FutureProviderFamily<ClubStats, int> _clubStatsProvider =
-    FutureProvider.autoDispose.family<ClubStats, int>((ref, clubId) async {
-  return ref.read(clubsRepositoryProvider).getClubStats(clubId);
-});
+final FutureProviderFamily<ClubStats, int> _clubStatsProvider = FutureProvider
+    .autoDispose
+    .family<ClubStats, int>((ref, clubId) async {
+      return ref.read(clubsRepositoryProvider).getClubStats(clubId);
+    });
 
 final FutureProviderFamily<List<Activity>, int> _clubActivitiesProvider =
     FutureProvider.autoDispose.family<List<Activity>, int>((ref, clubId) async {
-  return ref.read(clubsRepositoryProvider).getClubActivities(clubId);
-});
+      return ref.read(clubsRepositoryProvider).getClubActivities(clubId);
+    });
 
 class ClubPublicPage extends ConsumerStatefulWidget {
   const ClubPublicPage({required this.clubId, super.key});
@@ -80,9 +83,7 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
   Future<void> _cancelRequest(UserClub userClub) async {
     setState(() => _loading = true);
     try {
-      await ref
-          .read(clubsRepositoryProvider)
-          .cancelJoinRequest(userClub.id);
+      await ref.read(clubsRepositoryProvider).cancelJoinRequest(userClub.id);
       ref
         ..invalidate(myClubsProvider)
         ..invalidate(activeClubIdProvider);
@@ -113,27 +114,28 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
       appBar: AppBar(title: const Text('Club')),
       body: clubAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => ErrorView(
+          message: 'Impossible de charger ce club.',
+          onRetry: () => ref.invalidate(_clubPublicProvider(widget.clubId)),
+        ),
         data: (club) {
           // Trouver si l'utilisateur est déjà lié à ce club
           final userClub = myClubs
               .where((uc) => uc.club.id == club.id)
               .firstOrNull;
 
-          final isPending =
-              userClub != null && userClub.validatedAt == null;
-          final isMember =
-              userClub != null && userClub.validatedAt != null;
-          final isPrivate =
-              club.joinPolicy == JoinPolicy.manualValidation;
-            final activities =
+          final isPending = userClub != null && userClub.validatedAt == null;
+          final isMember = userClub != null && userClub.validatedAt != null;
+          final isPrivate = club.joinPolicy == JoinPolicy.manualValidation;
+          final activities =
               activitiesAsync.asData?.value ?? const <Activity>[];
-          final disciplineNames = activities
-              .map((activity) => activity.activityType?.name)
-              .whereType<String>()
-              .toSet()
-              .toList()
-            ..sort();
+          final disciplineNames =
+              activities
+                  .map((activity) => activity.activityType?.name)
+                  .whereType<String>()
+                  .toSet()
+                  .toList()
+                ..sort();
           final groupedActivities = <String, List<Activity>>{};
           for (final activity in activities) {
             final discipline = activity.activityType?.name ?? 'Autres';
@@ -151,8 +153,7 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
                 data: (stats) => Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _StatChip(
                         label: 'Membres',
@@ -253,7 +254,7 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
                   ),
                 ),
 
-              // Cas 2 : demande en attente
+                // Cas 2 : demande en attente
               ] else if (isPending) ...[
                 _Notice(
                   icon: Icons.hourglass_top,
@@ -266,33 +267,29 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed:
-                        _loading ? null : () => _cancelRequest(userClub),
+                    onPressed: _loading ? null : () => _cancelRequest(userClub),
                     icon: _loading
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child:
-                                CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.close),
                     label: const Text('Annuler ma demande'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: theme.colorScheme.error,
-                      side:
-                          BorderSide(color: theme.colorScheme.error),
+                      side: BorderSide(color: theme.colorScheme.error),
                     ),
                   ),
                 ),
 
-              // Cas 3 : club privé, non membre
+                // Cas 3 : club privé, non membre
               ] else if (isPrivate) ...[
                 _Notice(
                   icon: Icons.lock_outline,
                   text:
-                      'Ce club partage ses informations principales, '
-                      'mais le détail des activités reste réservé '
-                      'aux membres.',
+                      'Ce club est privé — vous devez envoyer'
+                      " une demande d'adhésion ",
                   color: theme.colorScheme.surfaceContainerHighest,
                   textColor: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -302,7 +299,7 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
                   onPressed: () => _joinClub(club),
                 ),
 
-              // Cas 4 : club public, non membre
+                // Cas 4 : club public, non membre
               ] else ...[
                 if (groupedActivities.isNotEmpty) ...[
                   Text(
@@ -340,9 +337,7 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
                 ],
                 _Notice(
                   icon: Icons.lock_open_outlined,
-                  text:
-                      'Club public — vous pouvez rejoindre immédiatement '
-                      'et explorer davantage son contenu.',
+                  text: 'Club public — vous pouvez rejoindre immédiatement ',
                   color: theme.colorScheme.primaryContainer,
                   textColor: theme.colorScheme.onPrimaryContainer,
                 ),
@@ -426,8 +421,8 @@ class _Notice extends StatelessWidget {
             child: Text(
               text,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: textColor,
-                  ),
+                color: textColor,
+              ),
             ),
           ),
         ],
@@ -483,8 +478,9 @@ class _StatChip extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '$value',
-          style: theme.textTheme.titleMedium
-              ?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Text(
           label,

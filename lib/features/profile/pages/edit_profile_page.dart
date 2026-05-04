@@ -39,12 +39,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     setState(() => _loading = true);
     try {
       final user = ref.read(meProvider).asData!.value;
-      final updated = await ref.read(profileRepositoryProvider).updateProfile(
-        userId: user.id,
-        firstName: _firstName.text.trim(),
-        lastName: _lastName.text.trim(),
-        phone: _phone.text.trim().isEmpty ? null : _phone.text.trim(),
-      );
+      final updated = await ref
+          .read(profileRepositoryProvider)
+          .updateProfile(
+            userId: user.id,
+            firstName: _firstName.text.trim(),
+            lastName: _lastName.text.trim(),
+            phone: _phone.text.trim().isEmpty ? null : _phone.text.trim(),
+          );
       ref.read(meProvider.notifier).updateUser(updated);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

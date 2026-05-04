@@ -9,8 +9,8 @@ final clubSearchQueryProvider = StateProvider<String>((ref) => '');
 /// Résultats de recherche — se relance quand la query change.
 final clubSearchResultsProvider =
     AsyncNotifierProvider<ClubSearchNotifier, List<Club>>(
-  ClubSearchNotifier.new,
-);
+      ClubSearchNotifier.new,
+    );
 
 class ClubSearchNotifier extends AsyncNotifier<List<Club>> {
   @override

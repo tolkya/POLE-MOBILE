@@ -264,8 +264,8 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: textColor,
-            ),
+          color: textColor,
+        ),
       ),
     );
   }

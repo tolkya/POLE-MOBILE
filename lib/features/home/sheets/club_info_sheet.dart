@@ -29,7 +29,7 @@ class ClubInfoSheet extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-            // Poignée
+                // Poignée
                 Center(
                   child: Container(
                     width: 40,
@@ -42,9 +42,9 @@ class ClubInfoSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-              // Nom du club
-              Text(club.name, style: theme.textTheme.titleLarge),
-              const SizedBox(height: 16),
+                // Nom du club
+                Text(club.name, style: theme.textTheme.titleLarge),
+                const SizedBox(height: 16),
 
                 // Stats
                 if (stats != null) ...[
@@ -134,12 +134,13 @@ class ClubInfoSheet extends StatelessWidget {
     );
   }
 
-  List<String> get _disciplineNames => activities
-      .map((activity) => activity.activityType?.name)
-      .whereType<String>()
-      .toSet()
-      .toList()
-    ..sort();
+  List<String> get _disciplineNames =>
+      activities
+          .map((activity) => activity.activityType?.name)
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
 
   String get _addressLine {
     final parts = <String>[
@@ -205,8 +206,7 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(icon,
-              size: 18, color: theme.colorScheme.onSurfaceVariant),
+          Icon(icon, size: 18, color: theme.colorScheme.onSurfaceVariant),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

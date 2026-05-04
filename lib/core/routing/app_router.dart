@@ -14,8 +14,6 @@ import 'package:pole_mobile/features/profile/pages/profile_page.dart';
 import 'package:pole_mobile/features/shell/shell_page.dart';
 import 'package:pole_mobile/features/splash/splash_page.dart';
 
-
-
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = _RouterNotifier(ref);
 

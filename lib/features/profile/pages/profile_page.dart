@@ -12,6 +12,8 @@ import 'package:pole_mobile/features/profile/pages/change_password_page.dart';
 import 'package:pole_mobile/features/profile/pages/edit_profile_page.dart';
 import 'package:pole_mobile/features/profile/providers/me_provider.dart';
 import 'package:pole_mobile/features/profile/providers/theme_mode_provider.dart';
+import 'package:pole_mobile/shared/widgets/error_view.dart';
+import 'package:pole_mobile/shared/widgets/skeleton_loader.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -26,8 +28,28 @@ class ProfilePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Profil')),
       body: meAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        loading: () => const Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              SkeletonBox(width: 72, height: 72, borderRadius: 36),
+              SizedBox(height: 12),
+              SkeletonBox(height: 20, width: 180),
+              SizedBox(height: 8),
+              SkeletonBox(height: 14, width: 220),
+              SizedBox(height: 24),
+              SkeletonBox(height: 56, borderRadius: 12),
+              SizedBox(height: 12),
+              SkeletonBox(height: 56, borderRadius: 12),
+              SizedBox(height: 12),
+              SkeletonBox(height: 56, borderRadius: 12),
+            ],
+          ),
+        ),
+        error: (e, _) => ErrorView(
+          message: 'Impossible de charger le profil.',
+          onRetry: () => ref.invalidate(meProvider),
+        ),
         data: (user) => ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -92,8 +114,7 @@ class ProfilePage extends ConsumerWidget {
                           color: Colors.red,
                         ),
                         tooltip: 'Quitter ce club',
-                        onPressed: () =>
-                            _confirmLeave(ref, context, uc),
+                        onPressed: () => _confirmLeave(ref, context, uc),
                       ),
                     ],
                   ),
