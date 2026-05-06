@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Skill {
 
- int get id; String get name; String? get description; List<SkillMediaTuto> get skillMediaTutos;
+ int get id; String get name; String? get description; List<SkillMediaTuto> get skillMediaTutos;@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) int? get createdById;
 /// Create a copy of Skill
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SkillCopyWith<Skill> get copyWith => _$SkillCopyWithImpl<Skill>(this as Skill, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Skill&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.skillMediaTutos, skillMediaTutos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Skill&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.skillMediaTutos, skillMediaTutos)&&(identical(other.createdById, createdById) || other.createdById == createdById));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,const DeepCollectionEquality().hash(skillMediaTutos));
+int get hashCode => Object.hash(runtimeType,id,name,description,const DeepCollectionEquality().hash(skillMediaTutos),createdById);
 
 @override
 String toString() {
-  return 'Skill(id: $id, name: $name, description: $description, skillMediaTutos: $skillMediaTutos)';
+  return 'Skill(id: $id, name: $name, description: $description, skillMediaTutos: $skillMediaTutos, createdById: $createdById)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SkillCopyWith<$Res>  {
   factory $SkillCopyWith(Skill value, $Res Function(Skill) _then) = _$SkillCopyWithImpl;
 @useResult
 $Res call({
- int id, String name, String? description, List<SkillMediaTuto> skillMediaTutos
+ int id, String name, String? description, List<SkillMediaTuto> skillMediaTutos,@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) int? createdById
 });
 
 
@@ -65,13 +65,14 @@ class _$SkillCopyWithImpl<$Res>
 
 /// Create a copy of Skill
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? skillMediaTutos = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? skillMediaTutos = null,Object? createdById = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,skillMediaTutos: null == skillMediaTutos ? _self.skillMediaTutos : skillMediaTutos // ignore: cast_nullable_to_non_nullable
-as List<SkillMediaTuto>,
+as List<SkillMediaTuto>,createdById: freezed == createdById ? _self.createdById : createdById // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 
@@ -156,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  String? description,  List<SkillMediaTuto> skillMediaTutos)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  String? description,  List<SkillMediaTuto> skillMediaTutos, @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson)  int? createdById)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Skill() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos);case _:
+return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos,_that.createdById);case _:
   return orElse();
 
 }
@@ -177,10 +178,10 @@ return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  String? description,  List<SkillMediaTuto> skillMediaTutos)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  String? description,  List<SkillMediaTuto> skillMediaTutos, @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson)  int? createdById)  $default,) {final _that = this;
 switch (_that) {
 case _Skill():
-return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos);case _:
+return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos,_that.createdById);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +198,10 @@ return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  String? description,  List<SkillMediaTuto> skillMediaTutos)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  String? description,  List<SkillMediaTuto> skillMediaTutos, @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson)  int? createdById)?  $default,) {final _that = this;
 switch (_that) {
 case _Skill() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos);case _:
+return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos,_that.createdById);case _:
   return null;
 
 }
@@ -212,7 +213,7 @@ return $default(_that.id,_that.name,_that.description,_that.skillMediaTutos);cas
 @JsonSerializable()
 
 class _Skill implements Skill {
-  const _Skill({required this.id, required this.name, this.description, final  List<SkillMediaTuto> skillMediaTutos = const []}): _skillMediaTutos = skillMediaTutos;
+  const _Skill({required this.id, required this.name, this.description, final  List<SkillMediaTuto> skillMediaTutos = const [], @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) this.createdById}): _skillMediaTutos = skillMediaTutos;
   factory _Skill.fromJson(Map<String, dynamic> json) => _$SkillFromJson(json);
 
 @override final  int id;
@@ -225,6 +226,7 @@ class _Skill implements Skill {
   return EqualUnmodifiableListView(_skillMediaTutos);
 }
 
+@override@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) final  int? createdById;
 
 /// Create a copy of Skill
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Skill&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._skillMediaTutos, _skillMediaTutos));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Skill&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other._skillMediaTutos, _skillMediaTutos)&&(identical(other.createdById, createdById) || other.createdById == createdById));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,const DeepCollectionEquality().hash(_skillMediaTutos));
+int get hashCode => Object.hash(runtimeType,id,name,description,const DeepCollectionEquality().hash(_skillMediaTutos),createdById);
 
 @override
 String toString() {
-  return 'Skill(id: $id, name: $name, description: $description, skillMediaTutos: $skillMediaTutos)';
+  return 'Skill(id: $id, name: $name, description: $description, skillMediaTutos: $skillMediaTutos, createdById: $createdById)';
 }
 
 
@@ -259,7 +261,7 @@ abstract mixin class _$SkillCopyWith<$Res> implements $SkillCopyWith<$Res> {
   factory _$SkillCopyWith(_Skill value, $Res Function(_Skill) _then) = __$SkillCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String name, String? description, List<SkillMediaTuto> skillMediaTutos
+ int id, String name, String? description, List<SkillMediaTuto> skillMediaTutos,@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) int? createdById
 });
 
 
@@ -276,13 +278,14 @@ class __$SkillCopyWithImpl<$Res>
 
 /// Create a copy of Skill
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? skillMediaTutos = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? skillMediaTutos = null,Object? createdById = freezed,}) {
   return _then(_Skill(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,skillMediaTutos: null == skillMediaTutos ? _self._skillMediaTutos : skillMediaTutos // ignore: cast_nullable_to_non_nullable
-as List<SkillMediaTuto>,
+as List<SkillMediaTuto>,createdById: freezed == createdById ? _self.createdById : createdById // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

@@ -5,10 +5,13 @@ import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/core/models/user_activity.dart';
 import 'package:pole_mobile/core/theme/club_theme_provider.dart';
 import 'package:pole_mobile/features/activities/data/activities_repository.dart';
+import 'package:pole_mobile/features/activities/pages/pending_enrollments_page.dart';
 import 'package:pole_mobile/features/activities/providers/club_activities_provider.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
+import 'package:pole_mobile/features/activities/sheets/create_level_sheet.dart';
 import 'package:pole_mobile/features/activities/widgets/level_accordion.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
+import 'package:pole_mobile/features/clubs/providers/active_roles_provider.dart';
 import 'package:pole_mobile/shared/widgets/empty_state.dart';
 import 'package:pole_mobile/shared/widgets/error_view.dart';
 import 'package:pole_mobile/shared/widgets/skeleton_loader.dart';
@@ -38,6 +41,20 @@ class ActivityDetailPage extends ConsumerWidget {
     final activity = activitiesAsync?.asData?.value
         .where((a) => a.id == activityId)
         .firstOrNull;
+    
+    final isTeacher = userActivity?.role == ActivityRole.teacher
+    || ref.watch(isClubAdminProvider);
+
+    final membersAsync = isTeacher
+        ? ref.watch(activityMembersProvider(activityId))
+        : null;
+
+    final pendingCount = membersAsync?.asData?.value
+            .where((m) => m.status == UserActivityStatus.pending)
+            .length ??
+        0;
+
+    final isAdmin = ref.watch(isClubAdminProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +62,38 @@ class ActivityDetailPage extends ConsumerWidget {
         backgroundColor: ct.primary,
         foregroundColor: ct.onPrimary,
         iconTheme: IconThemeData(color: ct.onPrimary),
+        actions: [
+          if (isTeacher && activity != null)
+            IconButton(
+              tooltip: 'Gestion des inscriptions',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => PendingEnrollmentsPage(
+                    activityId: activityId,
+                    isAdmin: isAdmin,
+                  ),
+                ),
+              ),
+              icon: pendingCount > 0
+                  ? Badge(
+                      label: Text(pendingCount.toString()),
+                      child: const Icon(Icons.people_outline),
+                    )
+                  : const Icon(Icons.people_outline),
+            ),
+        ],
       ),
+      floatingActionButton: (isTeacher && activity != null)
+          ? FloatingActionButton.extended(
+              onPressed: () => showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                builder: (_) => CreateLevelSheet(activityId: activityId),
+              ),
+              icon: const Icon(Icons.add),
+              label: const Text('Ajouter un niveau'),
+            )
+          : null,
       body: !isApprovedMember
           ? Center(
               child: Text(
@@ -109,7 +157,10 @@ class ActivityDetailPage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                LevelAccordion(activityId: activityId),
+                LevelAccordion(
+                  activityId: activityId,
+                  isTeacher: isTeacher,
+                ),
               ],
             ),
     );

@@ -15,6 +15,7 @@ _Skill _$SkillFromJson(Map<String, dynamic> json) => _Skill(
           ?.map((e) => SkillMediaTuto.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
+  createdById: _createdByIdFromJson(json['createdBy']),
 );
 
 Map<String, dynamic> _$SkillToJson(_Skill instance) => <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$SkillToJson(_Skill instance) => <String, dynamic>{
   'name': instance.name,
   'description': instance.description,
   'skillMediaTutos': instance.skillMediaTutos,
+  'createdBy': instance.createdById,
 };

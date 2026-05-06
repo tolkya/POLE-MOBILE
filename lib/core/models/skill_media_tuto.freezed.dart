@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SkillMediaTuto {
 
- int get id; String? get mediaUrl; String? get mimetype; String? get originalName;
+ int get id; String? get mediaUrl; String? get mimetype; String? get originalName;@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) int? get createdById;
 /// Create a copy of SkillMediaTuto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $SkillMediaTutoCopyWith<SkillMediaTuto> get copyWith => _$SkillMediaTutoCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SkillMediaTuto&&(identical(other.id, id) || other.id == id)&&(identical(other.mediaUrl, mediaUrl) || other.mediaUrl == mediaUrl)&&(identical(other.mimetype, mimetype) || other.mimetype == mimetype)&&(identical(other.originalName, originalName) || other.originalName == originalName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SkillMediaTuto&&(identical(other.id, id) || other.id == id)&&(identical(other.mediaUrl, mediaUrl) || other.mediaUrl == mediaUrl)&&(identical(other.mimetype, mimetype) || other.mimetype == mimetype)&&(identical(other.originalName, originalName) || other.originalName == originalName)&&(identical(other.createdById, createdById) || other.createdById == createdById));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,mediaUrl,mimetype,originalName);
+int get hashCode => Object.hash(runtimeType,id,mediaUrl,mimetype,originalName,createdById);
 
 @override
 String toString() {
-  return 'SkillMediaTuto(id: $id, mediaUrl: $mediaUrl, mimetype: $mimetype, originalName: $originalName)';
+  return 'SkillMediaTuto(id: $id, mediaUrl: $mediaUrl, mimetype: $mimetype, originalName: $originalName, createdById: $createdById)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $SkillMediaTutoCopyWith<$Res>  {
   factory $SkillMediaTutoCopyWith(SkillMediaTuto value, $Res Function(SkillMediaTuto) _then) = _$SkillMediaTutoCopyWithImpl;
 @useResult
 $Res call({
- int id, String? mediaUrl, String? mimetype, String? originalName
+ int id, String? mediaUrl, String? mimetype, String? originalName,@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) int? createdById
 });
 
 
@@ -65,13 +65,14 @@ class _$SkillMediaTutoCopyWithImpl<$Res>
 
 /// Create a copy of SkillMediaTuto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? mediaUrl = freezed,Object? mimetype = freezed,Object? originalName = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? mediaUrl = freezed,Object? mimetype = freezed,Object? originalName = freezed,Object? createdById = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,mediaUrl: freezed == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
 as String?,mimetype: freezed == mimetype ? _self.mimetype : mimetype // ignore: cast_nullable_to_non_nullable
 as String?,originalName: freezed == originalName ? _self.originalName : originalName // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,createdById: freezed == createdById ? _self.createdById : createdById // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 
@@ -156,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName, @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson)  int? createdById)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SkillMediaTuto() when $default != null:
-return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case _:
+return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName,_that.createdById);case _:
   return orElse();
 
 }
@@ -177,10 +178,10 @@ return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName, @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson)  int? createdById)  $default,) {final _that = this;
 switch (_that) {
 case _SkillMediaTuto():
-return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case _:
+return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName,_that.createdById);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +198,10 @@ return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? mediaUrl,  String? mimetype,  String? originalName, @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson)  int? createdById)?  $default,) {final _that = this;
 switch (_that) {
 case _SkillMediaTuto() when $default != null:
-return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case _:
+return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName,_that.createdById);case _:
   return null;
 
 }
@@ -212,13 +213,14 @@ return $default(_that.id,_that.mediaUrl,_that.mimetype,_that.originalName);case 
 @JsonSerializable()
 
 class _SkillMediaTuto implements SkillMediaTuto {
-  const _SkillMediaTuto({required this.id, this.mediaUrl, this.mimetype, this.originalName});
+  const _SkillMediaTuto({required this.id, this.mediaUrl, this.mimetype, this.originalName, @JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) this.createdById});
   factory _SkillMediaTuto.fromJson(Map<String, dynamic> json) => _$SkillMediaTutoFromJson(json);
 
 @override final  int id;
 @override final  String? mediaUrl;
 @override final  String? mimetype;
 @override final  String? originalName;
+@override@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) final  int? createdById;
 
 /// Create a copy of SkillMediaTuto
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SkillMediaTuto&&(identical(other.id, id) || other.id == id)&&(identical(other.mediaUrl, mediaUrl) || other.mediaUrl == mediaUrl)&&(identical(other.mimetype, mimetype) || other.mimetype == mimetype)&&(identical(other.originalName, originalName) || other.originalName == originalName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SkillMediaTuto&&(identical(other.id, id) || other.id == id)&&(identical(other.mediaUrl, mediaUrl) || other.mediaUrl == mediaUrl)&&(identical(other.mimetype, mimetype) || other.mimetype == mimetype)&&(identical(other.originalName, originalName) || other.originalName == originalName)&&(identical(other.createdById, createdById) || other.createdById == createdById));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,mediaUrl,mimetype,originalName);
+int get hashCode => Object.hash(runtimeType,id,mediaUrl,mimetype,originalName,createdById);
 
 @override
 String toString() {
-  return 'SkillMediaTuto(id: $id, mediaUrl: $mediaUrl, mimetype: $mimetype, originalName: $originalName)';
+  return 'SkillMediaTuto(id: $id, mediaUrl: $mediaUrl, mimetype: $mimetype, originalName: $originalName, createdById: $createdById)';
 }
 
 
@@ -253,7 +255,7 @@ abstract mixin class _$SkillMediaTutoCopyWith<$Res> implements $SkillMediaTutoCo
   factory _$SkillMediaTutoCopyWith(_SkillMediaTuto value, $Res Function(_SkillMediaTuto) _then) = __$SkillMediaTutoCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String? mediaUrl, String? mimetype, String? originalName
+ int id, String? mediaUrl, String? mimetype, String? originalName,@JsonKey(name: 'createdBy', fromJson: _createdByIdFromJson) int? createdById
 });
 
 
@@ -270,13 +272,14 @@ class __$SkillMediaTutoCopyWithImpl<$Res>
 
 /// Create a copy of SkillMediaTuto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? mediaUrl = freezed,Object? mimetype = freezed,Object? originalName = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? mediaUrl = freezed,Object? mimetype = freezed,Object? originalName = freezed,Object? createdById = freezed,}) {
   return _then(_SkillMediaTuto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,mediaUrl: freezed == mediaUrl ? _self.mediaUrl : mediaUrl // ignore: cast_nullable_to_non_nullable
 as String?,mimetype: freezed == mimetype ? _self.mimetype : mimetype // ignore: cast_nullable_to_non_nullable
 as String?,originalName: freezed == originalName ? _self.originalName : originalName // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,createdById: freezed == createdById ? _self.createdById : createdById // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

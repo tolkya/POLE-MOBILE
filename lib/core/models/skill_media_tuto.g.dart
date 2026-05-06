@@ -12,6 +12,7 @@ _SkillMediaTuto _$SkillMediaTutoFromJson(Map<String, dynamic> json) =>
       mediaUrl: json['mediaUrl'] as String?,
       mimetype: json['mimetype'] as String?,
       originalName: json['originalName'] as String?,
+      createdById: _createdByIdFromJson(json['createdBy']),
     );
 
 Map<String, dynamic> _$SkillMediaTutoToJson(_SkillMediaTuto instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$SkillMediaTutoToJson(_SkillMediaTuto instance) =>
       'mediaUrl': instance.mediaUrl,
       'mimetype': instance.mimetype,
       'originalName': instance.originalName,
+      'createdBy': instance.createdById,
     };
