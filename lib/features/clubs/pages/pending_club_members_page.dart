@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
@@ -18,6 +19,73 @@ class PendingClubMembersPage extends ConsumerWidget {
   });
 
   final int clubId;
+
+  void _showNotFoundSnackbar(BuildContext context) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Cette demande n'existe plus. "
+          "L'utilisateur l'a probablement annulée.",
+        ),
+      ),
+    );
+  }
+
+  void _showGenericErrorSnackbar(BuildContext context, Object error) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(error.toString())),
+    );
+  }
+
+  Future<void> _validateMember(
+    BuildContext context,
+    WidgetRef ref,
+    ClubMember member,
+  ) async {
+    try {
+      await ref.read(clubsRepositoryProvider).validateClubMember(member.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Membre validé.')),
+      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        _showNotFoundSnackbar(context);
+      } else {
+        _showGenericErrorSnackbar(context, e);
+      }
+    } on Object catch (e) {
+      _showGenericErrorSnackbar(context, e);
+    } finally {
+      ref.invalidate(clubMembersProvider(clubId));
+    }
+  }
+
+  Future<void> _rejectMember(
+    BuildContext context,
+    WidgetRef ref,
+    ClubMember member,
+  ) async {
+    try {
+      await ref.read(clubsRepositoryProvider).rejectClubMember(member.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Demande refusée.')),
+      );
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        _showNotFoundSnackbar(context);
+      } else {
+        _showGenericErrorSnackbar(context, e);
+      }
+    } on Object catch (e) {
+      _showGenericErrorSnackbar(context, e);
+    } finally {
+      ref.invalidate(clubMembersProvider(clubId));
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,30 +133,11 @@ class PendingClubMembersPage extends ConsumerWidget {
                   ),
                   confirmDismiss: (direction) async {
                     if (direction == DismissDirection.startToEnd) {
-                      await ref
-                          .read(clubsRepositoryProvider)
-                          .validateClubMember(member.id);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Membre validé.'),
-                          ),
-                        );
-                      }
+                      await _validateMember(context, ref, member);
                     } else {
-                      await ref
-                          .read(clubsRepositoryProvider)
-                          .rejectClubMember(member.id);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Demande refusée.'),
-                          ),
-                        );
-                      }
+                      await _rejectMember(context, ref, member);
                     }
 
-                    ref.invalidate(clubMembersProvider(clubId));
                     return false;
                   },
                   child: ListTile(
@@ -111,15 +160,7 @@ class PendingClubMembersPage extends ConsumerWidget {
                           ),
                           tooltip: 'Valider',
                           onPressed: () async {
-                            await ref
-                                .read(clubsRepositoryProvider)
-                                .validateClubMember(member.id);
-                            ref.invalidate(clubMembersProvider(clubId));
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Membre validé.')),
-                              );
-                            }
+                            await _validateMember(context, ref, member);
                           },
                         ),
                         IconButton(
@@ -141,13 +182,11 @@ class PendingClubMembersPage extends ConsumerWidget {
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(ctx, false),
+                                    onPressed: () => Navigator.pop(ctx, false),
                                     child: const Text('Non'),
                                   ),
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(ctx, true),
+                                    onPressed: () => Navigator.pop(ctx, true),
                                     style: TextButton.styleFrom(
                                       foregroundColor: Colors.red,
                                     ),
@@ -156,18 +195,10 @@ class PendingClubMembersPage extends ConsumerWidget {
                                 ],
                               ),
                             );
+
                             if (confirmed != true) return;
-                            await ref
-                                .read(clubsRepositoryProvider)
-                                .rejectClubMember(member.id);
-                            ref.invalidate(clubMembersProvider(clubId));
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Demande refusée.'),
-                                ),
-                              );
-                            }
+                            if (!context.mounted) return;
+                            await _rejectMember(context, ref, member);
                           },
                         ),
                       ],
