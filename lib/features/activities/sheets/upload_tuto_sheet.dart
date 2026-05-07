@@ -125,7 +125,7 @@ class _UploadTutoSheetState extends ConsumerState<UploadTutoSheet> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Ajouter un tuto',
+            'Enregistrement du media',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 20),

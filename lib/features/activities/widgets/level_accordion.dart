@@ -180,6 +180,9 @@ class _SkillCard extends ConsumerWidget {
     required this.isTeacher,
   });
 
+  static const double _mediaCardWidth = 176;
+  static const double _mediaCardAspectRatio = 4 / 5;
+
   final Skill skill;
   final int levelId;
   final bool isTeacher;
@@ -286,7 +289,7 @@ class _SkillCard extends ConsumerWidget {
             if (medias.isNotEmpty) ...[
               const SizedBox(height: 10),
               SizedBox(
-                height: 160,
+                height: _mediaCardWidth / _mediaCardAspectRatio,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: medias.length,
@@ -296,6 +299,10 @@ class _SkillCard extends ConsumerWidget {
                     tuto: medias[index],
                     levelId: levelId,
                     isTeacher: isTeacher,
+                    width: _mediaCardWidth,
+                    aspectRatio: _mediaCardAspectRatio,
+                    backgroundColor: ct.dark,
+                    loaderColor: ct.primary,
                   ),
                 ),
               ),
@@ -331,49 +338,30 @@ class _MediaThumbnail extends ConsumerWidget {
     required this.tuto,
     required this.levelId,
     required this.isTeacher,
+    required this.width,
+    required this.aspectRatio,
+    required this.backgroundColor,
+    required this.loaderColor,
   });
 
   final SkillMediaTuto tuto;
   final int levelId;
   final bool isTeacher;
+  final double width;
+  final double aspectRatio;
+  final Color backgroundColor;
+  final Color loaderColor;
 
   bool get _isVideo => tuto.mimetype?.startsWith('video/') ?? false;
 
-  void _openImage(BuildContext context, String url) {
+  void _openViewer(BuildContext context, String url) {
     unawaited(
       showDialog<void>(
         context: context,
-        builder: (_) => Dialog(
-          backgroundColor: Colors.black,
-          insetPadding: EdgeInsets.zero,
-          child: Stack(
-            children: [
-              InteractiveViewer(
-                child: CachedNetworkImage(
-                  imageUrl: url,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ],
-          ),
+        builder: (_) => _MediaViewerDialog(
+          url: url,
+          isVideo: _isVideo,
         ),
-      ),
-    );
-  }
-
-  void _openVideo(BuildContext context, String url) {
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (_) => _VideoPlayerDialog(url: url),
       ),
     );
   }
@@ -385,35 +373,98 @@ class _MediaThumbnail extends ConsumerWidget {
     final canDelete = isTeacher &&
         tuto.createdById != null &&
         tuto.createdById == currentUserId;
+    final ct = ref.watch(clubThemeProvider);
+    final radius = BorderRadius.circular(14);
 
     return Stack(
       children: [
         GestureDetector(
-      onTap: () =>
-          _isVideo ? _openVideo(context, url) : _openImage(context, url),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: SizedBox(
-          width: 160,
-          height: 160,
-          child: _isVideo
-              ? _VideoThumbnail(url: url)
-              : CachedNetworkImage(
-                  imageUrl: url,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => const ColoredBox(
-                    color: Colors.black12,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => const ColoredBox(
-                    color: Colors.black12,
-                    child: Icon(Icons.broken_image),
-                  ),
+          onTap: () => _openViewer(context, url),
+          child: Container(
+            width: width,
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              border: Border.all(color: ct.border),
+              boxShadow: [
+                BoxShadow(
+                  color: ct.dark.withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
-        ),
-      ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: radius,
+              child: AspectRatio(
+                aspectRatio: aspectRatio,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(color: ct.surface),
+                      child: _isVideo
+                          ? _VideoThumbnail(
+                              url: url,
+                              backgroundColor: backgroundColor,
+                              loaderColor: loaderColor,
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: url,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => ColoredBox(
+                                color: ct.subtle,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: ct.primary,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => ColoredBox(
+                                color: ct.subtle,
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  color: ct.dark,
+                                ),
+                              ),
+                            ),
+                    ),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.08),
+                            Colors.black.withValues(alpha: 0.12),
+                            Colors.black.withValues(alpha: 0.36),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 10,
+                      bottom: 10,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          _isVideo
+                              ? Icons.play_arrow_rounded
+                              : Icons.open_in_full_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
         if (canDelete)
           Positioned(
@@ -471,9 +522,15 @@ class _MediaThumbnail extends ConsumerWidget {
 
 // Charge la vidéo et affiche la première image comme miniature
 class _VideoThumbnail extends StatefulWidget {
-  const _VideoThumbnail({required this.url});
+  const _VideoThumbnail({
+    required this.url,
+    required this.backgroundColor,
+    required this.loaderColor,
+  });
 
   final String url;
+  final Color backgroundColor;
+  final Color loaderColor;
 
   @override
   State<_VideoThumbnail> createState() => _VideoThumbnailState();
@@ -521,12 +578,12 @@ class _VideoThumbnailState extends State<_VideoThumbnail> {
   @override
   Widget build(BuildContext context) {
     if (_hasError) {
-      return const Stack(
+      return Stack(
         fit: StackFit.expand,
         children: [
-          ColoredBox(color: Colors.black),
-          ColoredBox(color: Color(0x44000000)),
-          Center(
+          ColoredBox(color: widget.backgroundColor),
+          ColoredBox(color: Colors.black.withValues(alpha: 0.22)),
+          const Center(
             child: Icon(
               Icons.play_circle_filled,
               color: Colors.white,
@@ -538,18 +595,30 @@ class _VideoThumbnailState extends State<_VideoThumbnail> {
     }
 
     if (!_initialized || _controller == null) {
-      return const ColoredBox(
-        color: Colors.black,
+      return ColoredBox(
+        color: widget.backgroundColor,
         child: Center(
-          child: CircularProgressIndicator(color: Colors.white),
+          child: CircularProgressIndicator(color: widget.loaderColor),
         ),
       );
     }
+
+    final controller = _controller!;
+    final videoSize = controller.value.size;
+
     return Stack(
       fit: StackFit.expand,
       children: [
-        VideoPlayer(_controller!),
-        const ColoredBox(color: Color(0x44000000)),
+        FittedBox(
+          fit: BoxFit.cover,
+          clipBehavior: Clip.hardEdge,
+          child: SizedBox(
+            width: videoSize.width,
+            height: videoSize.height,
+            child: VideoPlayer(controller),
+          ),
+        ),
+        ColoredBox(color: Colors.black.withValues(alpha: 0.2)),
         const Center(
           child: Icon(
             Icons.play_circle_filled,
@@ -562,42 +631,61 @@ class _VideoThumbnailState extends State<_VideoThumbnail> {
   }
 }
 
-// Dialog plein écran pour lire la vidéo
-class _VideoPlayerDialog extends StatefulWidget {
-  const _VideoPlayerDialog({required this.url});
+class _MediaViewerDialog extends StatefulWidget {
+  const _MediaViewerDialog({
+    required this.url,
+    required this.isVideo,
+  });
 
   final String url;
+  final bool isVideo;
 
   @override
-  State<_VideoPlayerDialog> createState() => _VideoPlayerDialogState();
+  State<_MediaViewerDialog> createState() => _MediaViewerDialogState();
 }
 
-class _VideoPlayerDialogState extends State<_VideoPlayerDialog> {
-  late VideoPlayerController _videoController;
+class _MediaViewerDialogState extends State<_MediaViewerDialog> {
+  VideoPlayerController? _videoController;
   ChewieController? _chewieController;
+  bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
-    unawaited(_init());
+    if (widget.isVideo) {
+      unawaited(_init());
+    }
   }
 
   Future<void> _init() async {
-    _videoController = VideoPlayerController.networkUrl(
-      Uri.parse(widget.url),
-    );
-    await _videoController.initialize();
-    _chewieController = ChewieController(
-      videoPlayerController: _videoController,
-      autoPlay: true,
-    );
-    if (mounted) setState(() {});
+    try {
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+      );
+      await controller.initialize();
+      final chewie = ChewieController(
+        videoPlayerController: controller,
+      );
+      if (!mounted) {
+        chewie.dispose();
+        unawaited(controller.dispose());
+        return;
+      }
+      setState(() {
+        _videoController = controller;
+        _chewieController = chewie;
+      });
+    } on Exception {
+      if (mounted) {
+        setState(() => _hasError = true);
+      }
+    }
   }
 
   @override
   void dispose() {
     _chewieController?.dispose();
-    unawaited(_videoController.dispose());
+    unawaited(_videoController?.dispose());
     super.dispose();
   }
 
@@ -609,12 +697,24 @@ class _VideoPlayerDialogState extends State<_VideoPlayerDialog> {
       child: Stack(
         children: [
           Center(
-            child: _chewieController != null
-                ? AspectRatio(
-                    aspectRatio: _videoController.value.aspectRatio,
-                    child: Chewie(controller: _chewieController!),
-                  )
-                : const CircularProgressIndicator(color: Colors.white),
+            child: widget.isVideo
+                ? _buildVideoViewer()
+                : InteractiveViewer(
+                    maxScale: 4,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.url,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                      errorWidget: (context, url, error) => const Icon(
+                        Icons.broken_image_outlined,
+                        color: Colors.white,
+                        size: 48,
+                      ),
+                    ),
+                  ),
           ),
           Positioned(
             top: 8,
@@ -626,6 +726,25 @@ class _VideoPlayerDialogState extends State<_VideoPlayerDialog> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildVideoViewer() {
+    if (_hasError) {
+      return const Icon(
+        Icons.error_outline,
+        color: Colors.white,
+        size: 48,
+      );
+    }
+
+    if (_chewieController == null || _videoController == null) {
+      return const CircularProgressIndicator(color: Colors.white);
+    }
+
+    return AspectRatio(
+      aspectRatio: _videoController!.value.aspectRatio,
+      child: Chewie(controller: _chewieController!),
     );
   }
 }
