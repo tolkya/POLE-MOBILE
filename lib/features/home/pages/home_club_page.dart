@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/models/club.dart';
 import 'package:pole_mobile/core/models/club_stats.dart';
+import 'package:pole_mobile/core/models/enums.dart';
 import 'package:pole_mobile/features/activities/providers/my_activities_provider.dart';
 import 'package:pole_mobile/features/club_switcher/club_switcher_sheet.dart';
 import 'package:pole_mobile/features/clubs/data/clubs_repository.dart';
+import 'package:pole_mobile/features/clubs/pages/pending_club_members_page.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
 import 'package:pole_mobile/features/home/sheets/club_info_sheet.dart';
 import 'package:pole_mobile/features/home/widgets/club_activities_grid.dart';
 import 'package:pole_mobile/features/home/widgets/club_hero.dart';
 import 'package:pole_mobile/features/home/widgets/my_activities_strip.dart';
-import 'package:pole_mobile/features/home/widgets/status_banner.dart';
 
 final FutureProviderFamily<ClubStats, int> clubStatsProvider = FutureProvider
     .autoDispose
@@ -50,6 +52,14 @@ class HomeClubPage extends ConsumerWidget {
       clubInfoActivitiesProvider(userClub.club.id),
     );
     final fullClub = clubInfoAsync.asData?.value ?? userClub.club;
+    final isAdmin = userClub.roles.contains(ClubRole.admin);
+    final isManualJoin = fullClub.joinPolicy == JoinPolicy.manualValidation;
+    final pendingCountAsync = (isAdmin && isManualJoin)
+        ? ref.watch(clubMembersProvider(userClub.club.id))
+        : null;
+    final pendingCount = pendingCountAsync?.asData?.value
+        .where((m) => m.isPending)
+        .length ?? 0;
 
     return Scaffold(
       body: RefreshIndicator(
@@ -112,14 +122,52 @@ class HomeClubPage extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    StatusBanner(userClub: userClub),
+                    Badge(
+                      isLabelVisible: pendingCount > 0,
+                      label: Text('$pendingCount'),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: () => context.push(
+                            '/clubs/${userClub.club.id}/pending-members',
+                          ),
+                          icon: const Icon(Icons.verified_user_outlined),
+                          label: const Text('Gérer les demandes du club'),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     if (isPending) ...[
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Annuler la demande ?'),
+                                content: const Text(
+                                  "Votre demande d'adhésion "
+                                  'à ce club sera annulée.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(ctx, false),
+                                    child: const Text('Non'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(ctx, true),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                    ),
+                                    child: const Text('Annuler la demande'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirmed != true) return;
                             await ref
                                 .read(clubsRepositoryProvider)
                                 .cancelJoinRequest(userClub.id);

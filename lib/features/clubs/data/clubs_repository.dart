@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/core/models/activity.dart';
 import 'package:pole_mobile/core/models/club.dart';
+import 'package:pole_mobile/core/models/club_member.dart';
 import 'package:pole_mobile/core/models/club_stats.dart';
 import 'package:pole_mobile/core/models/user_club.dart';
 import 'package:pole_mobile/core/network/dio_provider.dart';
@@ -68,5 +69,47 @@ class ClubsRepository {
       '/clubs/$clubId/stats',
     );
     return ClubStats.fromJson(response.data!);
+  }
+
+  Future<List<ClubMember>> getClubMembers(
+    int clubId, {
+    String? search,
+    String? role,
+    int? page,
+    int? limit,
+  }) async {
+    final response = await _dio.get<dynamic>(
+      '/clubs/$clubId/members',
+      queryParameters: <String, dynamic>{
+        'search': (search?.isNotEmpty ?? false) ? search : null,
+        'role': (role?.isNotEmpty ?? false) ? role : null,
+        'page': page,
+        'limit': limit,
+      }..removeWhere((_, value) => value == null),
+    );
+
+    final data = response.data;
+    final rows = data is List<dynamic>
+        ? data
+        : (data is Map<String, dynamic>
+              ? (data['member'] as List<dynamic>? ?? const <dynamic>[])
+              : const <dynamic>[]);
+
+    return rows
+        .cast<Map<String, dynamic>>()
+        .map(ClubMember.fromJson)
+        .toList();
+  }
+
+  Future<void> validateClubMember(int userClubId) async {
+    await _dio.patch<void>(
+      '/user-clubs/$userClubId',
+      data: {'validatedAt': DateTime.now().toIso8601String()},
+      options: Options(contentType: 'application/merge-patch+json'),
+    );
+  }
+
+  Future<void> rejectClubMember(int userClubId) async {
+    await _dio.delete<void>('/user-clubs/$userClubId');
   }
 }

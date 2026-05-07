@@ -202,6 +202,27 @@ class _JoinLeaveButtonState extends ConsumerState<_JoinLeaveButton> {
   }
 
   Future<void> _leave() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Quitter cette activité ?'),
+        content: const Text(
+          'Vous perdrez accès aux contenus de cette activité.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Quitter'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
     setState(() => _loading = true);
     try {
       await ref

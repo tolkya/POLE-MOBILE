@@ -6,6 +6,7 @@ import 'package:pole_mobile/features/auth/pages/auth_landing_page.dart';
 import 'package:pole_mobile/features/auth/pages/login_page.dart';
 import 'package:pole_mobile/features/auth/pages/register_page.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
+import 'package:pole_mobile/features/clubs/pages/pending_club_members_page.dart';
 import 'package:pole_mobile/features/discover/pages/club_public_page.dart';
 import 'package:pole_mobile/features/discover/pages/discover_page.dart';
 import 'package:pole_mobile/features/home/pages/home_page.dart';
@@ -58,6 +59,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/profile',
             builder: (_, _) => const ProfilePage(),
+          ),
+          GoRoute(
+            path: '/clubs/:clubId/pending-members',
+            builder: (_, state) {
+              final clubId = int.parse(state.pathParameters['clubId']!);
+              return PendingClubMembersPage(clubId: clubId);
+            },
           ),
         ],
       ),

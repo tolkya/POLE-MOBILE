@@ -81,6 +81,27 @@ class _ClubPublicPageState extends ConsumerState<ClubPublicPage> {
   }
 
   Future<void> _cancelRequest(UserClub userClub) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Annuler la demande ?'),
+        content: const Text(
+          "Votre demande d'adhésion à ce club sera annulée.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Non'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Annuler la demande'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
     setState(() => _loading = true);
     try {
       await ref.read(clubsRepositoryProvider).cancelJoinRequest(userClub.id);
