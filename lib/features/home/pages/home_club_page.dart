@@ -54,12 +54,16 @@ class HomeClubPage extends ConsumerWidget {
     final fullClub = clubInfoAsync.asData?.value ?? userClub.club;
     final isAdmin = userClub.roles.contains(ClubRole.admin);
     final isManualJoin = fullClub.joinPolicy == JoinPolicy.manualValidation;
-    final pendingCountAsync = (isAdmin && isManualJoin)
+    final canManageClubRequests = isAdmin && isManualJoin;
+
+    final pendingCountAsync = canManageClubRequests
         ? ref.watch(clubMembersProvider(userClub.club.id))
         : null;
+
     final pendingCount = pendingCountAsync?.asData?.value
-        .where((m) => m.isPending)
-        .length ?? 0;
+            .where((m) => m.isPending)
+            .length ??
+        0;
 
     return Scaffold(
       body: RefreshIndicator(
@@ -122,21 +126,23 @@ class HomeClubPage extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    Badge(
-                      isLabelVisible: pendingCount > 0,
-                      label: Text('$pendingCount'),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: FilledButton.icon(
-                          onPressed: () => context.push(
-                            '/clubs/${userClub.club.id}/pending-members',
+                    if (canManageClubRequests) ...[
+                      Badge(
+                        isLabelVisible: pendingCount > 0,
+                        label: Text('$pendingCount'),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            onPressed: () => context.push(
+                              '/clubs/${userClub.club.id}/pending-members',
+                            ),
+                            icon: const Icon(Icons.verified_user_outlined),
+                            label: const Text('Gérer les demandes du club'),
                           ),
-                          icon: const Icon(Icons.verified_user_outlined),
-                          label: const Text('Gérer les demandes du club'),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
+                    ],
                     if (isPending) ...[
                       SizedBox(
                         width: double.infinity,
