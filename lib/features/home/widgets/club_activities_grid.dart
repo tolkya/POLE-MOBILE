@@ -148,24 +148,27 @@ class ClubActivitiesGrid extends ConsumerWidget {
     unawaited(
       showModalBottomSheet<void>(
         context: context,
-        builder: (_) => Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                disciplineName,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                (description != null && description.isNotEmpty)
+        builder: (_) => SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  disciplineName,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  (description != null && description.isNotEmpty)
                     ? description
-                    : 'Aucune description disponible pour cette discipline.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
+                    : 'Aucune descritption disponible pour cette discipline.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
           ),
         ),
       ),

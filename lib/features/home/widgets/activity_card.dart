@@ -119,25 +119,28 @@ class _ActivityCardState extends ConsumerState<ActivityCard> {
     unawaited(
       showModalBottomSheet<void>(
         context: context,
-        builder: (_) => Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.activity.name,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                (widget.activity.description != null &&
-                        widget.activity.description!.isNotEmpty)
-                    ? widget.activity.description!
-                    : 'Aucune description disponible pour cette activité.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
+        builder: (_) => SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.activity.name,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  (widget.activity.description != null &&
+                          widget.activity.description!.isNotEmpty)
+                      ? widget.activity.description!
+                      : 'Aucune description disponible pour cette activité.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
           ),
         ),
       ),
