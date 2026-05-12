@@ -46,17 +46,33 @@ class AuthRepository {
     required String password,
     String? phone,
   }) async {
-    await _dio.post<void>(
-      '/register',
-      data: {
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'plainPassword': password,
-        if (phone != null && phone.isNotEmpty) 'phone': phone,
-      },
-    );
-    return login(email: email, password: password);
+    try {
+      await _dio.post<void>(
+        '/register',
+        data: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'plainPassword': password,
+          if (phone != null && phone.isNotEmpty) 'phone': phone,
+        },
+      );
+      return login(email: email, password: password);
+    } on DioException catch (e) {
+      final status = e.response?.statusCode;
+      final data = e.response?.data;
+      final detail = data is Map<String, dynamic>
+          ? data['detail'] as String?
+          : null;
+
+      if (status == 429) {
+        throw Exception(
+          detail ?? "Trop de tentatives d'inscription. Veuillez patienter.",
+        );
+      }
+
+      throw Exception(detail ?? 'Erreur réseau, réessaie plus tard');
+    }
   }
 
   /// Supprime le token du stockage sécurisé.

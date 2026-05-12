@@ -46,11 +46,11 @@ class AuthLandingPage extends StatelessWidget {
               const SizedBox(height: 24),
               InkWell(
                 onTap: () => launchUrl(
-                  Uri.parse('https://sparklib.com/register/club-admin'),
+                  Uri.parse('https://std34.beaupeyrat.com'),
                   mode: LaunchMode.externalApplication,
                 ),
                 child: Text(
-                  'Créer un club ? Rendez-vous sur sparklib.com →',
+                  "Plus d'options sur la version web Sparklib ->",
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.primary,
                     decoration: TextDecoration.underline,

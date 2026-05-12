@@ -22,7 +22,8 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final meAsync = ref.watch(meProvider);
     final clubs = ref.watch(myClubsProvider).asData?.value ?? [];
-    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
+    final themeMode = ref.watch(themeModeProvider);
+    final isDark = themeMode == ThemeMode.dark;
     final theme = Theme.of(context);
 
     return Scaffold(
