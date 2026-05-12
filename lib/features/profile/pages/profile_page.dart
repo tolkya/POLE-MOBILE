@@ -8,6 +8,7 @@ import 'package:pole_mobile/features/auth/providers/session_provider.dart';
 import 'package:pole_mobile/features/clubs/data/clubs_repository.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
+import 'package:pole_mobile/features/notifications/providers/notifications_provider.dart';
 import 'package:pole_mobile/features/profile/pages/change_password_page.dart';
 import 'package:pole_mobile/features/profile/pages/edit_profile_page.dart';
 import 'package:pole_mobile/features/profile/providers/me_provider.dart';
@@ -217,7 +218,8 @@ class ProfilePage extends ConsumerWidget {
       ..invalidate(meProvider)
       ..invalidate(myClubsProvider)
       ..invalidate(activeClubIdProvider)
-      ..invalidate(myActivitiesProvider);
+      ..invalidate(myActivitiesProvider)
+      ..invalidate(notificationsProvider);
     if (context.mounted) context.go('/auth');
   }
 }

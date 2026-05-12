@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pole_mobile/core/models/notification_receipt.dart';
+import 'package:pole_mobile/features/auth/providers/session_provider.dart';
 import 'package:pole_mobile/features/notifications/data/notifications_repository.dart';
 
 final notificationsProvider =
@@ -17,6 +18,13 @@ final unreadCountProvider = Provider<int>((ref) {
 class NotificationsNotifier extends AsyncNotifier<List<NotificationReceipt>> {
   @override
   Future<List<NotificationReceipt>> build() async {
+    // Rebuild on auth session changes to avoid leaking notifications
+    // between different users on the same device.
+    final token = ref.watch(tokenProvider);
+    if (token == null) {
+      return [];
+    }
+
     // Polling toutes les 30 minutes en foreground
     final timer = Timer.periodic(const Duration(minutes: 30), (_) => refresh());
     ref.onDispose(timer.cancel);

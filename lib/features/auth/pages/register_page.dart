@@ -5,6 +5,7 @@ import 'package:pole_mobile/features/auth/data/auth_repository.dart';
 import 'package:pole_mobile/features/auth/providers/session_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/active_club_provider.dart';
 import 'package:pole_mobile/features/clubs/providers/my_clubs_provider.dart';
+import 'package:pole_mobile/features/notifications/providers/notifications_provider.dart';
 import 'package:pole_mobile/features/profile/providers/me_provider.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
@@ -54,7 +55,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       ref
         ..invalidate(meProvider)
         ..invalidate(myClubsProvider)
-        ..invalidate(activeClubIdProvider);
+        ..invalidate(activeClubIdProvider)
+        ..invalidate(notificationsProvider);
       if (mounted) context.go('/home');
     } on Exception catch (e) {
       if (mounted) {
